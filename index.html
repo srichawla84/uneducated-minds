@@ -4,722 +4,258 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Uneducated Minds — Builder Dashboard</title>
-<meta name="description" content="Interactive AI dashboard for builders. Live signal tracking, Nova previews, and community pulse.">
-<meta property="og:title" content="Uneducated Minds — Builder Dashboard">
-<meta property="og:description" content="No fluff. No hype. Just signal. Interactive AI dashboard for builders.">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Interactive AI dashboard for builders. Live signal, Nova previews, community pulse.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        bg: { DEFAULT:'#050507', elevated:'#0a0a0f', card:'#0e0e14', input:'#111118' },
+        bdr: { DEFAULT:'#1a1a24', focus:'#2a2a3a' },
+        tx: { DEFAULT:'#f0f0f2', secondary:'#9898a6', tertiary:'#505060' },
+        accent: { DEFAULT:'#FF5733', hover:'#E04D2D', glow:'rgba(255,87,51,0.15)', glowStrong:'rgba(255,87,51,0.3)' },
+        signal: { high:'#FF5733', mod:'#FFAB00', danger:'#FF1744', low:'#546E7A' },
+        cyan: '#00E5FF',
+        wa: '#25D366',
+      },
+      fontFamily: {
+        serif: ['Instrument Serif','Georgia','serif'],
+        display: ['Syne','-apple-system','sans-serif'],
+        mono: ['JetBrains Mono','SF Mono','monospace'],
+      }
+    }
+  }
+}
+</script>
 <style>
-  :root {
-    --bg: #050507;
-    --bg-elevated: #0a0a0f;
-    --bg-card: #0e0e14;
-    --bg-input: #111118;
-    --border: #1a1a24;
-    --border-focus: #2a2a3a;
-    --text-primary: #f0f0f2;
-    --text-secondary: #9898a6;
-    --text-tertiary: #505060;
-    --accent: #e8553d;
-    --accent-hover: #d44a34;
-    --accent-glow: rgba(232,85,61,0.15);
-    --accent-glow-strong: rgba(232,85,61,0.25);
-    --signal-high: #34d399;
-    --signal-mod: #fbbf24;
-    --signal-low: #71717a;
-    --signal-danger: #f87171;
-    --blue: #60a5fa;
-    --wa: #25D366;
-    --font-serif: 'Instrument Serif', Georgia, serif;
-    --font-display: 'Syne', -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
-  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+  body{background:#050507;color:#f0f0f2;font-family:'Syne',-apple-system,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  /* ═══ GRAIN ═══ */
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
 
-  html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  /* ═══ GLASSMORPHISM ═══ */
+  .glass{background:rgba(14,14,20,0.45);backdrop-filter:blur(24px) saturate(1.2);-webkit-backdrop-filter:blur(24px) saturate(1.2);border:1px solid rgba(255,255,255,0.05)}
+  .glass-strong{background:rgba(14,14,20,0.65);backdrop-filter:blur(32px) saturate(1.3);-webkit-backdrop-filter:blur(32px) saturate(1.3);border:1px solid rgba(255,255,255,0.07)}
+  .glass-glow{transition:box-shadow .4s cubic-bezier(.34,1.56,.64,1),border-color .4s}
+  .glass-glow:hover{border-color:rgba(255,87,51,0.12);box-shadow:0 8px 40px rgba(255,87,51,0.06),inset 0 1px 0 rgba(255,255,255,0.03)}
+  .glass-glow-cyan:hover{border-color:rgba(0,229,255,0.12);box-shadow:0 8px 40px rgba(0,229,255,0.06)}
 
-  body {
-    background: var(--bg);
-    color: var(--text-primary);
-    font-family: var(--font-display);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
+  /* ═══ HAPTIC BUTTONS ═══ */
+  .haptic{transition:transform .15s cubic-bezier(.34,1.56,.64,1),box-shadow .2s,background .2s}
+  .haptic:hover{transform:scale(1.02)}
+  .haptic:active{transform:scale(0.98)}
 
-  /* GRAIN */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-  }
+  /* ═══ SPRING ANIMATIONS ═══ */
+  @keyframes spring-up{0%{opacity:0;transform:translateY(20px) scale(.97)}60%{transform:translateY(-2px) scale(1.005)}100%{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes spring-in{0%{opacity:0;transform:translateY(-14px) scale(.95)}65%{transform:translateY(3px) scale(1.008)}100%{opacity:1;transform:translateY(0) scale(1)}}
+  .anim-up{opacity:0;transform:translateY(20px)}.anim-up.visible{animation:spring-up .6s cubic-bezier(.34,1.56,.64,1) forwards}
+  .anim-delay-1{animation-delay:.08s}.anim-delay-2{animation-delay:.16s}.anim-delay-3{animation-delay:.24s}
 
-  .container { max-width: 640px; margin: 0 auto; padding: 0 24px; }
+  .feed-spring{animation:spring-in .45s cubic-bezier(.34,1.56,.64,1) forwards}
 
-  /* ═══════════ NAVBAR ═══════════ */
-  .nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-    padding: 14px 24px;
-    display: flex; justify-content: center;
-    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    background: rgba(5,5,7,0.65);
-    border-bottom: 1px solid transparent;
-    transition: all 0.35s;
-  }
-  .nav.scrolled { border-bottom-color: var(--border); background: rgba(5,5,7,0.92); }
+  /* ═══ HERO ORBS ═══ */
+  .orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px)}
+  .orb-coral{width:600px;height:600px;background:radial-gradient(circle,rgba(255,87,51,0.06) 0%,transparent 65%);top:35%;left:50%;transform:translate(-50%,-50%);animation:orb-drift 14s ease-in-out infinite}
+  .orb-cyan{width:400px;height:400px;background:radial-gradient(circle,rgba(0,229,255,0.03) 0%,transparent 65%);top:25%;left:30%;transform:translate(-50%,-50%);animation:orb-drift 18s ease-in-out infinite reverse}
+  @keyframes orb-drift{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-48%,-53%) scale(1.06)}}
 
-  .nav-inner {
-    max-width: 640px; width: 100%;
-    display: flex; align-items: center; justify-content: space-between;
-  }
+  /* ═══ TYPEWRITER ═══ */
+  .tw-cursor{border-right:2px solid #FF5733;animation:blink .7s step-end infinite}
+  @keyframes blink{50%{border-color:transparent}}
 
-  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .nav-logo-icon { width: 30px; height: 30px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
-  .nav-logo-text { font-family: var(--font-serif); font-size: 17px; color: var(--text-primary); letter-spacing: -0.3px; }
-  .nav-logo-text em { font-style: italic; color: var(--accent); }
+  /* ═══ HERO TRANSITION ═══ */
+  .hero-text-transition{transition:opacity .4s,transform .4s cubic-bezier(.34,1.56,.64,1)}
+  .hero-text-exit{opacity:0;transform:translateY(-8px) scale(.98)}
+  .hero-text-enter{opacity:1;transform:translateY(0) scale(1)}
 
-  .nav-status {
-    display: flex; align-items: center; gap: 8px;
-    font-family: var(--font-mono); font-size: 10px; letter-spacing: 1px;
-    color: var(--signal-high);
-    text-transform: uppercase;
-  }
-  .nav-status-dot {
-    width: 6px; height: 6px; background: var(--signal-high); border-radius: 50%;
-    animation: pulse-glow 2s infinite;
-  }
-  @keyframes pulse-glow {
-    0%,100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.5); }
-    50% { box-shadow: 0 0 0 6px rgba(52,211,153,0); }
-  }
+  /* ═══ ROLE PILLS ═══ */
+  .role-pill{padding:8px 16px;border-radius:100px;font-size:13px;font-weight:600;color:#9898a6;background:rgba(17,17,24,0.8);border:1px solid #1a1a24;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);white-space:nowrap}
+  .role-pill:hover{color:#f0f0f2;border-color:rgba(255,255,255,0.1);transform:scale(1.04)}
+  .role-pill.active{color:#FF5733;border-color:rgba(255,87,51,0.3);background:rgba(255,87,51,0.08);box-shadow:0 0 20px rgba(255,87,51,0.1)}
 
-  /* ═══════════ HERO — DASHBOARD ═══════════ */
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 110px 0 60px;
-    text-align: center;
-    position: relative; overflow: hidden;
-  }
+  /* ═══ SIGNAL BARS ═══ */
+  .signal-track{width:4px;height:36px;background:#111118;border-radius:2px;overflow:hidden;position:relative}
+  .signal-fill{position:absolute;bottom:0;left:0;right:0;border-radius:2px}
+  .signal-fill.high{background:linear-gradient(to top,#FF5733,#FF8A65);height:92%;animation:grow 1s cubic-bezier(.34,1.56,.64,1) forwards}
+  .signal-fill.danger{background:linear-gradient(to top,#FF1744,#FF5252);height:82%;animation:grow 1s .1s cubic-bezier(.34,1.56,.64,1) forwards}
+  .signal-fill.mod{background:linear-gradient(to top,#FFAB00,#FFD54F);height:58%;animation:grow 1s .2s cubic-bezier(.34,1.56,.64,1) forwards}
+  .signal-fill.low{background:linear-gradient(to top,#546E7A,#78909C);height:32%;animation:grow 1s .3s cubic-bezier(.34,1.56,.64,1) forwards}
+  @keyframes grow{from{height:0}}
 
-  .hero-orb {
-    position: absolute; width: 700px; height: 700px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(232,85,61,0.07) 0%, transparent 65%);
-    filter: blur(80px);
-    top: 40%; left: 50%; transform: translate(-50%, -50%);
-    pointer-events: none; animation: orb-drift 12s ease-in-out infinite;
-  }
-  .hero-orb-blue {
-    position: absolute; width: 500px; height: 500px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(96,165,250,0.04) 0%, transparent 65%);
-    filter: blur(60px);
-    top: 30%; left: 25%; transform: translate(-50%, -50%);
-    pointer-events: none; animation: orb-drift 15s ease-in-out infinite reverse;
-  }
-  @keyframes orb-drift {
-    0%,100% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-48%, -52%) scale(1.08); }
-  }
+  /* ═══ CAROUSEL ═══ */
+  .carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 0 16px}
+  .carousel::-webkit-scrollbar{display:none}
+  .carousel-card{scroll-snap-align:start;min-width:calc(100% - 16px);flex-shrink:0}
+  @media(min-width:640px){.carousel-card{min-width:calc(50% - 6px)}}
 
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: var(--font-mono); font-size: 10px; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--signal-high);
-    background: rgba(52,211,153,0.05); border: 1px solid rgba(52,211,153,0.1);
-    padding: 5px 14px; border-radius: 100px; margin-bottom: 28px;
-  }
-  .hero-badge .live-dot { width: 6px; height: 6px; background: var(--signal-high); border-radius: 50%; animation: pulse-glow 2s infinite; }
+  /* ═══ CAROUSEL INDICATOR ═══ */
+  .carousel-dots{display:flex;gap:6px;justify-content:center;margin-top:8px}
+  .carousel-dot{width:6px;height:6px;border-radius:50%;background:#1a1a24;transition:all .3s}
+  .carousel-dot.active{background:#FF5733;width:20px;border-radius:3px}
 
-  .hero-title {
-    font-family: var(--font-serif); font-size: clamp(48px, 11vw, 80px);
-    font-weight: 400; line-height: 0.95; letter-spacing: -2.5px;
-    color: var(--text-primary); margin-bottom: 12px;
-  }
-  .hero-title em { font-style: italic; color: var(--accent); }
+  /* ═══ PULSE DOT ═══ */
+  .pulse-dot{width:6px;height:6px;border-radius:50%;background:#FF5733;animation:glow-pulse 2s infinite}
+  @keyframes glow-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,87,51,0.5)}50%{box-shadow:0 0 0 6px rgba(255,87,51,0)}}
 
-  .typewriter-container {
-    min-height: 48px; margin-bottom: 24px;
-  }
-  .typewriter-label {
-    font-family: var(--font-mono); font-size: 9px; letter-spacing: 2.5px;
-    text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
-  }
-  .typewriter-text {
-    font-family: var(--font-serif); font-size: clamp(18px, 3.5vw, 24px);
-    color: var(--text-secondary); line-height: 1.35; font-style: italic;
-    border-right: 2px solid var(--accent);
-    animation: blink-caret 0.8s step-end infinite;
-    display: inline;
-  }
-  @keyframes blink-caret { 50% { border-color: transparent; } }
+  .green-dot{width:5px;height:5px;border-radius:50%;background:#34d399;animation:glow-pulse-green 2s infinite}
+  @keyframes glow-pulse-green{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,0.4)}50%{box-shadow:0 0 0 5px rgba(52,211,153,0)}}
 
-  .hero-desc {
-    font-size: 15px; line-height: 1.7; color: var(--text-tertiary);
-    max-width: 440px; margin: 0 auto 32px;
-  }
+  /* ═══ NOVA CHAT ═══ */
+  .nova-messages{scrollbar-width:thin;scrollbar-color:#1a1a24 transparent}
+  .nova-messages::-webkit-scrollbar{width:4px}
+  .nova-messages::-webkit-scrollbar-track{background:transparent}
+  .nova-messages::-webkit-scrollbar-thumb{background:#1a1a24;border-radius:2px}
 
-  .hero-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+  .msg-bubble-nova{background:rgba(14,14,20,0.6);border:1px solid rgba(255,255,255,0.05);border-bottom-left-radius:4px}
+  .msg-bubble-user{background:linear-gradient(135deg,#FF5733,#E04D2D);border-bottom-right-radius:4px}
+  .msg-highlight{background:rgba(255,87,51,0.05);border-left:2px solid #FF5733;padding:10px 14px;border-radius:0 8px 8px 0;margin-top:10px}
 
-  .btn-primary {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 13px 26px; background: var(--accent); color: white;
-    border-radius: 10px; font-family: var(--font-display); font-size: 14px;
-    font-weight: 700; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer;
-  }
-  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 24px var(--accent-glow-strong); }
+  /* ═══ FADE MASK FOR FEED ═══ */
+  .feed-mask{position:relative}
+  .feed-mask::after{content:'';position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(transparent,#0e0e14);pointer-events:none;border-radius:0 0 14px 14px}
 
-  .btn-ghost {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 13px 22px; background: transparent; color: var(--wa);
-    border: 1px solid rgba(37,211,102,0.2); border-radius: 10px;
-    font-family: var(--font-display); font-size: 14px; font-weight: 600;
-    text-decoration: none; transition: all 0.2s;
-  }
-  .btn-ghost:hover { background: rgba(37,211,102,0.05); border-color: rgba(37,211,102,0.35); transform: translateY(-1px); }
+  /* ═══ SCROLLBAR HIDE ═══ */
+  .no-scrollbar::-webkit-scrollbar{display:none}
+  .no-scrollbar{scrollbar-width:none}
 
-  .scroll-hint {
-    margin-top: auto; padding-top: 32px;
-    font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary);
-    letter-spacing: 1.5px; display: flex; flex-direction: column; align-items: center; gap: 6px;
-    animation: bob 2s infinite;
-  }
-  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
-
-  /* ═══════════ COMMUNITY PULSE ═══════════ */
-  .pulse {
-    padding: 20px 0 60px;
-  }
-  .pulse-label {
-    font-family: var(--font-mono); font-size: 9px; letter-spacing: 3px;
-    text-transform: uppercase; color: var(--text-tertiary); text-align: center;
-    margin-bottom: 24px;
-  }
-  .pulse-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-  }
-  .pulse-card {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 20px;
-    transition: border-color 0.3s, transform 0.3s;
-  }
-  .pulse-card:hover { border-color: rgba(255,255,255,0.05); transform: translateY(-2px); }
-  .pulse-card-icon { font-size: 20px; margin-bottom: 12px; }
-  .pulse-card-value {
-    font-family: var(--font-serif); font-size: 32px; color: var(--text-primary);
-    line-height: 1; letter-spacing: -1px; margin-bottom: 4px;
-  }
-  .pulse-card-value em { color: var(--accent); font-style: italic; }
-  .pulse-card-value.green em { color: var(--signal-high); }
-  .pulse-card-value.blue em { color: var(--blue); }
-  .pulse-card-label { font-size: 12px; color: var(--text-tertiary); }
-
-  .pulse-activity {
-    grid-column: 1 / -1;
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 20px;
-  }
-  .pulse-activity-header {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
-  }
-  .pulse-activity-title {
-    font-family: var(--font-mono); font-size: 10px; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--text-tertiary);
-  }
-  .pulse-activity-live {
-    display: flex; align-items: center; gap: 6px;
-    font-family: var(--font-mono); font-size: 9px; color: var(--signal-high);
-    letter-spacing: 1px; text-transform: uppercase;
-  }
-  .pulse-activity-live .live-dot { width: 5px; height: 5px; background: var(--signal-high); border-radius: 50%; animation: pulse-glow 2s infinite; }
-
-  .pulse-task-bar {
-    background: var(--bg-elevated); border-radius: 8px; padding: 12px 16px;
-    margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
-  }
-  .pulse-task-icon { font-size: 16px; }
-  .pulse-task-info { flex: 1; }
-  .pulse-task-name { font-size: 13px; color: var(--text-primary); font-weight: 600; margin-bottom: 2px; }
-  .pulse-task-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
-  .pulse-task-badge {
-    font-family: var(--font-mono); font-size: 9px; padding: 3px 10px;
-    border-radius: 100px; font-weight: 500;
-  }
-  .badge-active { background: rgba(52,211,153,0.08); color: var(--signal-high); }
-  .badge-new { background: rgba(96,165,250,0.08); color: var(--blue); }
-
-  .pulse-feed {
-    display: flex; flex-direction: column; gap: 6px; max-height: 120px;
-    overflow: hidden; position: relative;
-  }
-  .pulse-feed::after {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
-    background: linear-gradient(transparent, var(--bg-card));
-    pointer-events: none;
-  }
-  .feed-item {
-    font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);
-    padding: 4px 0; display: flex; align-items: center; gap: 8px;
-    animation: feed-slide-in 0.4s ease;
-  }
-  .feed-item .feed-time { color: var(--text-tertiary); min-width: 40px; }
-  .feed-item .feed-action { color: var(--text-secondary); }
-  @keyframes feed-slide-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* ═══════════ NOVA PREVIEW ═══════════ */
-  .nova {
-    padding: 60px 0;
-  }
-  .nova-label {
-    font-family: var(--font-mono); font-size: 9px; letter-spacing: 3px;
-    text-transform: uppercase; color: var(--text-tertiary); text-align: center;
-    margin-bottom: 24px;
-  }
-  .nova-chat {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 18px; overflow: hidden;
-  }
-  .nova-chat-header {
-    padding: 16px 20px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .nova-avatar {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), #ff8a65);
-    display: flex; align-items: center; justify-content: center; font-size: 16px;
-  }
-  .nova-chat-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
-  .nova-chat-status { font-family: var(--font-mono); font-size: 10px; color: var(--signal-high); }
-  .nova-chat-status::before {
-    content: ''; display: inline-block; width: 5px; height: 5px;
-    background: var(--signal-high); border-radius: 50%; margin-right: 5px;
-    animation: pulse-glow 2s infinite; vertical-align: middle;
-  }
-
-  .nova-messages {
-    padding: 20px; display: flex; flex-direction: column; gap: 14px;
-    min-height: 260px; max-height: 400px; overflow-y: auto;
-  }
-  .nova-messages::-webkit-scrollbar { width: 4px; }
-  .nova-messages::-webkit-scrollbar-track { background: transparent; }
-  .nova-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .msg { max-width: 85%; animation: msg-in 0.3s ease; }
-  .msg-nova { align-self: flex-start; }
-  .msg-user { align-self: flex-end; }
-  @keyframes msg-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-  .msg-bubble {
-    padding: 12px 16px; border-radius: 16px;
-    font-size: 14px; line-height: 1.6;
-  }
-  .msg-nova .msg-bubble {
-    background: var(--bg-elevated); border: 1px solid var(--border);
-    color: var(--text-secondary); border-bottom-left-radius: 4px;
-  }
-  .msg-user .msg-bubble {
-    background: var(--accent); color: white;
-    border-bottom-right-radius: 4px;
-  }
-  .msg-label {
-    font-family: var(--font-mono); font-size: 9px; letter-spacing: 1px;
-    text-transform: uppercase; margin-bottom: 6px;
-  }
-  .msg-nova .msg-label { color: var(--accent); }
-  .msg-user .msg-label { color: rgba(255,255,255,0.6); }
-
-  .msg-highlight {
-    background: rgba(232,85,61,0.06); border-left: 2px solid var(--accent);
-    padding: 10px 14px; border-radius: 0 8px 8px 0;
-    margin-top: 10px; font-size: 13px; color: var(--text-secondary); line-height: 1.6;
-  }
-  .msg-highlight strong { color: var(--accent); font-weight: 600; }
-
-  .nova-input-area {
-    padding: 16px 20px; border-top: 1px solid var(--border);
-    display: flex; gap: 10px;
-  }
-  .nova-input {
-    flex: 1; background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 16px;
-    font-family: var(--font-display); font-size: 14px;
-    color: var(--text-primary); outline: none; transition: border-color 0.2s;
-  }
-  .nova-input:focus { border-color: var(--border-focus); }
-  .nova-input::placeholder { color: var(--text-tertiary); }
-
-  .nova-send {
-    width: 44px; height: 44px; background: var(--accent); border: none;
-    border-radius: 10px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-  }
-  .nova-send:hover { background: var(--accent-hover); transform: scale(1.05); }
-  .nova-send svg { width: 18px; height: 18px; fill: white; }
-
-  /* ═══════════ LATEST ISSUE + SIGNAL METERS ═══════════ */
-  .issue {
-    padding: 60px 0;
-  }
-  .issue-label {
-    font-family: var(--font-mono); font-size: 9px; letter-spacing: 3px;
-    text-transform: uppercase; color: var(--text-tertiary); text-align: center;
-    margin-bottom: 24px;
-  }
-  .issue-card {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden;
-  }
-  .issue-header {
-    padding: 18px 20px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .issue-header-left { display: flex; align-items: center; gap: 10px; }
-  .issue-header-logo { font-family: var(--font-serif); font-size: 14px; color: var(--text-primary); }
-  .issue-header-logo em { color: var(--accent); }
-  .issue-badge {
-    font-family: var(--font-mono); font-size: 9px; color: var(--text-tertiary);
-    background: var(--bg-elevated); padding: 3px 10px; border-radius: 100px;
-  }
-
-  .issue-body { padding: 20px; }
-
-  .issue-headline-label {
-    font-family: var(--font-mono); font-size: 8px; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
-  }
-  .issue-headline {
-    font-family: var(--font-serif); font-size: 20px; color: var(--text-primary);
-    line-height: 1.3; letter-spacing: -0.3px; margin-bottom: 20px;
-  }
-
-  .story-item {
-    padding: 14px 0; border-top: 1px solid rgba(26,26,36,0.6);
-    display: flex; gap: 14px; align-items: flex-start;
-    transition: background 0.2s;
-  }
-  .story-item:first-of-type { border-top: none; }
-  .story-item:hover { background: rgba(255,255,255,0.01); }
-
-  .signal-meter {
-    min-width: 40px; display: flex; flex-direction: column; align-items: center;
-    gap: 4px; padding-top: 4px;
-  }
-  .signal-bar-track {
-    width: 4px; height: 32px; background: var(--bg-input);
-    border-radius: 2px; overflow: hidden; position: relative;
-  }
-  .signal-bar-fill {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    border-radius: 2px;
-    animation: signal-grow 1.2s ease forwards;
-  }
-  @keyframes signal-grow { from { height: 0; } }
-
-  .signal-bar-fill.high { background: var(--signal-high); height: 90%; }
-  .signal-bar-fill.moderate { background: var(--signal-mod); height: 60%; }
-  .signal-bar-fill.dangerous { background: var(--signal-danger); height: 80%; }
-  .signal-bar-fill.low { background: var(--signal-low); height: 35%; }
-
-  .signal-label {
-    font-family: var(--font-mono); font-size: 7px; letter-spacing: 0.5px;
-    text-transform: uppercase; writing-mode: vertical-rl; text-orientation: mixed;
-    color: var(--text-tertiary);
-  }
-
-  .story-content { flex: 1; }
-  .story-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-  .story-num { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
-  .story-signal-badge {
-    font-family: var(--font-mono); font-size: 8px; padding: 2px 8px;
-    border-radius: 100px; font-weight: 500;
-  }
-  .story-signal-badge.high { color: var(--signal-high); background: rgba(52,211,153,0.06); }
-  .story-signal-badge.moderate { color: var(--signal-mod); background: rgba(251,191,36,0.06); }
-  .story-signal-badge.dangerous { color: var(--signal-danger); background: rgba(248,113,113,0.06); }
-
-  .story-title {
-    font-family: var(--font-serif); font-size: 15px; color: var(--text-secondary);
-    line-height: 1.35;
-  }
-  .story-title:hover { color: var(--text-primary); cursor: pointer; }
-
-  .issue-footer {
-    padding: 14px 20px; border-top: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .issue-footer-text { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
-  .issue-cta {
-    font-size: 12px; color: var(--accent); font-weight: 600; text-decoration: none;
-    display: flex; align-items: center; gap: 4px; transition: gap 0.2s;
-  }
-  .issue-cta:hover { gap: 8px; }
-
-  /* ═══════════ SIGNUP ═══════════ */
-  .signup {
-    padding: 60px 0;
-  }
-  .signup-card {
-    background: var(--bg-elevated); border: 1px solid var(--border);
-    border-radius: 18px; padding: 32px; position: relative; overflow: hidden;
-  }
-  .signup-card::before {
-    content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
-    width: 100px; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  }
-  .signup-title { font-family: var(--font-serif); font-size: 26px; color: var(--text-primary); text-align: center; margin-bottom: 6px; }
-  .signup-sub { font-size: 13px; color: var(--text-tertiary); text-align: center; margin-bottom: 24px; }
-
-  .form-group { margin-bottom: 12px; }
-  .form-label {
-    display: block; font-family: var(--font-mono); font-size: 9px;
-    letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--text-tertiary); margin-bottom: 5px;
-  }
-  .form-input {
-    width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px;
-    font-family: var(--font-display); font-size: 14px;
-    color: var(--text-primary); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .form-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-glow); }
-  .form-input::placeholder { color: var(--text-tertiary); }
-
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .form-select {
-    width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px;
-    font-family: var(--font-display); font-size: 14px;
-    color: var(--text-primary); outline: none; cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23505060' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 14px center;
-  }
-  .form-select option { background: var(--bg-card); color: var(--text-primary); }
-
-  .form-check { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; cursor: pointer; }
-  .form-check input[type="checkbox"] {
-    appearance: none; width: 16px; height: 16px; min-width: 16px;
-    border: 1px solid var(--border); border-radius: 4px;
-    background: var(--bg-input); cursor: pointer; margin-top: 2px;
-  }
-  .form-check input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
-  .form-check input[type="checkbox"]:checked::after {
-    content: '✓'; display: flex; align-items: center; justify-content: center;
-    width: 100%; height: 100%; color: white; font-size: 10px; font-weight: 700;
-  }
-  .form-check-label { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
-  .form-check-label a { color: var(--blue); text-decoration: underline; text-decoration-color: rgba(96,165,250,0.3); }
-
-  .submit-btn {
-    width: 100%; margin-top: 18px; padding: 14px;
-    background: var(--accent); color: white; border: none; border-radius: 10px;
-    font-family: var(--font-display); font-size: 15px; font-weight: 700;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .submit-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 24px var(--accent-glow-strong); }
-  .submit-btn .btn-arrow { display: inline-block; margin-left: 5px; transition: transform 0.2s; }
-  .submit-btn:hover .btn-arrow { transform: translateX(3px); }
-
-  .segment-note {
-    text-align: center; margin-top: 14px; font-size: 11px; color: var(--text-tertiary);
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    opacity: 0; transition: opacity 0.5s;
-  }
-  .segment-note.visible { opacity: 1; }
-  .segment-note .seg-dot { width: 4px; height: 4px; background: var(--blue); border-radius: 50%; animation: pulse-glow 2s infinite; }
-
-  .signup-proof {
-    text-align: center; margin-top: 16px;
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-  }
-  .signup-proof-avatars { display: flex; }
-  .signup-proof-avatars span {
-    width: 22px; height: 22px; border-radius: 50%;
-    border: 2px solid var(--bg-elevated); margin-left: -5px;
-    display: inline-flex; align-items: center; justify-content: center; font-size: 10px;
-  }
-  .signup-proof-avatars span:first-child { margin-left: 0; }
-  .signup-proof-text { font-size: 12px; color: var(--text-tertiary); }
-  .signup-proof-text strong { color: var(--text-secondary); }
-
-  /* ═══════════ WHATSAPP CTA ═══════════ */
-  .wa-cta { padding: 20px 0 60px; }
-  .wa-card {
-    background: linear-gradient(135deg, rgba(37,211,102,0.03), transparent);
-    border: 1px solid rgba(37,211,102,0.1); border-radius: 16px;
-    padding: 28px; display: flex; gap: 20px; align-items: center;
-  }
-  .wa-icon {
-    min-width: 52px; width: 52px; height: 52px;
-    background: rgba(37,211,102,0.07); border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .wa-title { font-family: var(--font-serif); font-size: 20px; color: var(--text-primary); margin-bottom: 4px; }
-  .wa-desc { font-size: 13px; color: var(--text-tertiary); line-height: 1.6; margin-bottom: 14px; }
-  .wa-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 10px 20px; background: #25D366; color: white;
-    border-radius: 10px; font-family: var(--font-display);
-    font-size: 13px; font-weight: 700; text-decoration: none; transition: all 0.2s;
-  }
-  .wa-btn:hover { background: #20bd5a; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,211,102,0.25); }
-
-  /* ═══════════ FAQ ═══════════ */
-  .faq { padding: 60px 0; }
-  .faq-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-tertiary); text-align: center; margin-bottom: 24px; }
-  .faq-item { border-bottom: 1px solid var(--border); }
-  .faq-question {
-    width: 100%; display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 0; background: none; border: none;
-    color: var(--text-primary); font-family: var(--font-display);
-    font-size: 14px; cursor: pointer; text-align: left; transition: color 0.15s;
-  }
-  .faq-question:hover { color: var(--accent); }
-  .faq-icon {
-    width: 22px; height: 22px; border-radius: 50%; background: var(--bg-card);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; color: var(--text-tertiary); flex-shrink: 0; transition: transform 0.2s;
-  }
-  .faq-item.open .faq-icon { transform: rotate(45deg); }
-  .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; }
-  .faq-item.open .faq-answer { max-height: 200px; padding-bottom: 16px; }
-  .faq-answer p { font-size: 13px; color: var(--text-tertiary); line-height: 1.7; }
-
-  /* ═══════════ FOOTER ═══════════ */
-  .footer { padding: 50px 0 32px; text-align: center; }
-  .footer-logo { font-family: var(--font-serif); font-size: 22px; color: var(--text-primary); margin-bottom: 6px; }
-  .footer-logo em { color: var(--accent); font-style: italic; }
-  .footer-tagline { font-size: 12px; color: var(--text-tertiary); margin-bottom: 24px; letter-spacing: 0.5px; }
-  .footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 24px; }
-  .footer-links a { font-size: 11px; color: var(--text-tertiary); text-decoration: none; transition: color 0.15s; }
-  .footer-links a:hover { color: var(--text-secondary); }
-  .footer-copy { font-size: 11px; color: var(--text-tertiary); line-height: 1.8; }
-
-  /* ═══════════ FLOATING WHATSAPP ═══════════ */
-  .floating-wa {
-    position: fixed; bottom: 24px; right: 24px; z-index: 190;
-    width: 52px; height: 52px; background: #25D366; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 20px rgba(37,211,102,0.35); transition: all 0.3s;
-    text-decoration: none; opacity: 0; transform: scale(0.8); pointer-events: none;
-  }
-  .floating-wa.visible { opacity: 1; transform: scale(1); pointer-events: auto; }
-  .floating-wa:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.45); }
-  .floating-wa svg { width: 26px; height: 26px; fill: white; }
-
-  /* ═══════════ ANIMATIONS ═══════════ */
-  .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
-  .fade-up.visible { opacity: 1; transform: translateY(0); }
-  .fade-up:nth-child(2) { transition-delay: 0.08s; }
-  .fade-up:nth-child(3) { transition-delay: 0.16s; }
-  .fade-up:nth-child(4) { transition-delay: 0.24s; }
-
-  /* ═══════════ RESPONSIVE ═══════════ */
-  @media (max-width: 640px) {
-    .hero-title { letter-spacing: -1.5px; }
-    .hero-actions { flex-direction: column; align-items: stretch; }
-    .btn-primary, .btn-ghost { justify-content: center; }
-    .pulse-grid { grid-template-columns: 1fr; }
-    .wa-card { flex-direction: column; text-align: center; }
-    .form-row { grid-template-columns: 1fr; }
-    .signup-card { padding: 24px; }
-    .footer-links { flex-direction: column; align-items: center; gap: 10px; }
-  }
+  /* ═══ CUSTOM SCROLLBAR ═══ */
+  ::-webkit-scrollbar{width:6px}
+  ::-webkit-scrollbar-track{background:#050507}
+  ::-webkit-scrollbar-thumb{background:#1a1a24;border-radius:3px}
+  ::-webkit-scrollbar-thumb:hover{background:#2a2a3a}
 </style>
 </head>
 <body>
 
 <!-- ═══ NAVBAR ═══ -->
-<nav class="nav" id="nav">
-  <div class="nav-inner">
-    <a href="#" class="nav-logo">
-      <div class="nav-logo-icon">🧠</div>
-      <div class="nav-logo-text">Uneducated <em>Minds</em></div>
+<nav id="nav" class="fixed top-0 inset-x-0 z-[200] py-3 px-5 flex justify-center transition-all duration-300" style="background:rgba(5,5,7,0.5);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid transparent">
+  <div class="max-w-[640px] w-full flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2.5 no-underline">
+      <div class="w-8 h-8 rounded-lg bg-accent flex items-center justify-center text-sm">🧠</div>
+      <span class="font-serif text-[17px] text-tx">Uneducated <em class="text-accent not-italic italic">Minds</em></span>
     </a>
-    <div class="nav-status">
-      <span class="nav-status-dot"></span>
-      Live
+    <div class="flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase text-accent">
+      <span class="pulse-dot"></span> Live
     </div>
   </div>
 </nav>
 
 <!-- ═══ HERO ═══ -->
-<section class="hero" id="hero">
-  <div class="hero-orb"></div>
-  <div class="hero-orb-blue"></div>
-  <div class="container">
-    <div class="hero-badge">
-      <span class="live-dot"></span>
-      Issue #001 · Builder Dashboard
-    </div>
-    <h1 class="hero-title fade-up">Uneducated<br><em>Minds</em></h1>
-    <p class="hero-subtitle fade-up">Your unfair advantage in AI.</p>
+<section id="hero" class="relative min-h-screen flex flex-col justify-center py-28 pb-14 text-center overflow-hidden">
+  <div class="orb orb-coral"></div>
+  <div class="orb orb-cyan"></div>
+  <div class="max-w-[640px] mx-auto px-6 relative z-10">
 
-    <div class="typewriter-container fade-up">
-      <div class="typewriter-label">Latest High-Signal Story</div>
-      <div class="typewriter-text" id="typewriter"></div>
+    <!-- Badge -->
+    <div class="anim-up inline-flex items-center gap-2 font-mono text-[10px] tracking-[2px] uppercase px-4 py-1.5 rounded-full mb-7" style="background:rgba(255,87,51,0.06);border:1px solid rgba(255,87,51,0.12);color:#FF5733">
+      <span class="green-dot"></span> Issue #001 · Builder Dashboard
     </div>
 
-    <p class="hero-desc fade-up">
-      No fluff. No hype. Just signal. 6 curated stories, one contrarian editorial, and one actionable task — every morning at 7 AM IST.
+    <!-- Title -->
+    <h1 class="anim-up anim-delay-1 font-serif text-[clamp(52px,12vw,84px)] leading-[0.92] tracking-tighter mb-3 hero-text-transition hero-text-enter" id="heroTitle">
+      Uneducated<br><em class="italic text-accent">Minds</em>
+    </h1>
+
+    <!-- Dynamic Subtitle -->
+    <p class="anim-up anim-delay-2 font-serif text-[clamp(20px,4.5vw,30px)] text-tx-secondary leading-snug italic mb-6 hero-text-transition hero-text-enter" id="heroSubtitle">
+      Your unfair advantage in AI.
     </p>
 
-    <div class="hero-actions fade-up">
-      <a href="#nova" class="btn-primary">Try Nova Preview</a>
-      <a href="https://chat.whatsapp.com/InEX5pNx4e01v7y4Iubw4t" class="btn-ghost" target="_blank" rel="noopener">
+    <!-- Dynamic Description -->
+    <p class="anim-up anim-delay-2 text-[15px] leading-relaxed text-tx-tertiary max-w-[440px] mx-auto mb-8 hero-text-transition hero-text-enter" id="heroDesc">
+      No fluff. No hype. Just signal. 6 curated stories, one contrarian take, and one actionable task — every morning at 7 AM.
+    </p>
+
+    <!-- ROLE SELECTOR (Hero Interaction) -->
+    <div class="anim-up anim-delay-3 mb-8">
+      <div class="font-mono text-[9px] tracking-[2.5px] uppercase text-tx-tertiary mb-3">I am a…</div>
+      <div class="flex flex-wrap gap-2 justify-center" id="rolePills">
+        <button class="role-pill haptic" data-role="pm" onclick="selectHeroRole('pm',this)">Product Manager</button>
+        <button class="role-pill haptic" data-role="engineer" onclick="selectHeroRole('engineer',this)">Engineer</button>
+        <button class="role-pill haptic" data-role="founder" onclick="selectHeroRole('founder',this)">Founder</button>
+        <button class="role-pill haptic" data-role="designer" onclick="selectHeroRole('designer',this)">Designer</button>
+        <button class="role-pill haptic" data-role="operator" onclick="selectHeroRole('operator',this)">Operator</button>
+        <button class="role-pill haptic" data-role="investor" onclick="selectHeroRole('investor',this)">Investor</button>
+        <button class="role-pill haptic" data-role="researcher" onclick="selectHeroRole('researcher',this)">Researcher</button>
+      </div>
+    </div>
+
+    <!-- Typewriter -->
+    <div class="anim-up anim-delay-3 mb-8">
+      <div class="font-mono text-[8px] tracking-[2.5px] uppercase text-accent mb-1">Latest High-Signal Story</div>
+      <div class="font-serif text-[clamp(16px,3vw,22px)] text-tx-secondary italic leading-snug tw-cursor inline" id="typewriter"></div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="anim-up anim-delay-3 flex gap-2.5 justify-center flex-wrap">
+      <a href="#nova" class="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-xl font-display text-[14px] font-bold no-underline haptic" style="box-shadow:0 4px 20px rgba(255,87,51,0.15)">
+        Try Nova Preview
+      </a>
+      <a href="https://chat.whatsapp.com/InEX5pNx4e01v7y4Iubw4t" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-5 py-3 text-wa rounded-xl font-display text-[14px] font-semibold no-underline haptic" style="background:transparent;border:1px solid rgba(37,211,102,0.2)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        Join on WhatsApp
+        Join WhatsApp
       </a>
     </div>
 
-    <div class="scroll-hint">
-      <span>Explore Dashboard</span>
+    <!-- Scroll hint -->
+    <div class="mt-auto pt-10 font-mono text-[10px] text-tx-tertiary tracking-[1.5px] flex flex-col items-center gap-1.5" style="animation:bob 2.5s infinite">
+      <span>Explore</span>
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
   </div>
+  <style>@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}</style>
 </section>
 
 <!-- ═══ COMMUNITY PULSE ═══ -->
-<section class="pulse">
-  <div class="container">
-    <div class="pulse-label">Community Pulse</div>
-    <div class="pulse-grid">
-      <div class="pulse-card fade-up">
-        <div class="pulse-card-icon">📊</div>
-        <div class="pulse-card-value"><em id="builderCount">142</em></div>
-        <div class="pulse-card-label">Builders active today</div>
+<section class="py-10 pb-16">
+  <div class="max-w-[640px] mx-auto px-6">
+    <div class="font-mono text-[9px] tracking-[3px] uppercase text-tx-tertiary text-center mb-6">Community Pulse</div>
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div class="glass rounded-2xl p-5 glass-glow anim-up">
+        <div class="text-xl mb-3">📊</div>
+        <div class="font-serif text-[34px] leading-none tracking-tight mb-1"><em class="italic text-accent" id="builderCount">0</em></div>
+        <div class="text-[12px] text-tx-tertiary">Builders active today</div>
       </div>
-      <div class="pulse-card fade-up">
-        <div class="pulse-card-icon">⚡</div>
-        <div class="pulse-card-value green"><em>6</em></div>
-        <div class="pulse-card-label">Stories curated today</div>
+      <div class="glass rounded-2xl p-5 glass-glow anim-up">
+        <div class="text-xl mb-3">⚡</div>
+        <div class="font-serif text-[34px] leading-none tracking-tight mb-1"><em class="italic text-cyan">6</em></div>
+        <div class="text-[12px] text-tx-tertiary">Stories curated today</div>
       </div>
-      <div class="pulse-activity">
-        <div class="pulse-activity-header">
-          <span class="pulse-activity-title">Builder Activity Feed</span>
-          <span class="pulse-activity-live"><span class="live-dot"></span> Live</span>
+    </div>
+
+    <!-- Activity -->
+    <div class="glass rounded-2xl p-5 anim-up">
+      <div class="flex items-center justify-between mb-4">
+        <span class="font-mono text-[10px] tracking-[2px] uppercase text-tx-tertiary">Builder Activity Feed</span>
+        <span class="flex items-center gap-1.5 font-mono text-[9px] tracking-widest uppercase" style="color:#34d399"><span class="green-dot"></span> Live</span>
+      </div>
+
+      <!-- Current task -->
+      <div class="rounded-lg p-3 mb-3 flex items-center gap-3" style="background:#0a0a0f">
+        <span class="text-base">🎯</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-[13px] font-semibold text-tx truncate">Test HDPO on your own agent workflow</div>
+          <div class="font-mono text-[10px] text-tx-tertiary">Today's Task · Issue #001</div>
         </div>
-        <div class="pulse-task-bar">
-          <span class="pulse-task-icon">🎯</span>
-          <div class="pulse-task-info">
-            <div class="pulse-task-name">Test HDPO on your own agent workflow</div>
-            <div class="pulse-task-meta">Today's Task · Issue #001</div>
-          </div>
-          <span class="pulse-task-badge badge-active">Active</span>
-        </div>
-        <div class="pulse-feed" id="activityFeed">
-          <div class="feed-item"><span class="feed-time">2m ago</span> <span class="feed-action">A builder tested the HDPO calculator</span></div>
-          <div class="feed-item"><span class="feed-time">5m ago</span> <span class="feed-action">New member joined from Bangalore</span></div>
-          <div class="feed-item"><span class="feed-time">8m ago</span> <span class="feed-action">3 builders shared their AI stack</span></div>
-          <div class="feed-item"><span class="feed-time">12m ago</span> <span class="feed-action">Counter-take poll hit 87 responses</span></div>
-          <div class="feed-item"><span class="feed-time">15m ago</span> <span class="feed-action">New member joined from San Francisco</span></div>
+        <span class="font-mono text-[9px] px-2.5 py-1 rounded-full flex-shrink-0" style="background:rgba(52,211,153,0.07);color:#34d399">Active</span>
+      </div>
+
+      <!-- Feed -->
+      <div class="feed-mask" style="max-height:130px;overflow:hidden">
+        <div id="activityFeed" class="flex flex-col gap-1">
+          <div class="feed-spring font-mono text-[11px] text-tx-tertiary py-1 flex items-center gap-2"><span class="text-tx-tertiary min-w-[42px]">2m</span><span class="text-tx-secondary">A builder tested the HDPO calculator</span></div>
+          <div class="feed-spring font-mono text-[11px] text-tx-tertiary py-1 flex items-center gap-2"><span class="text-tx-tertiary min-w-[42px]">5m</span><span class="text-tx-secondary">New member joined from Bangalore</span></div>
+          <div class="feed-spring font-mono text-[11px] text-tx-tertiary py-1 flex items-center gap-2"><span class="text-tx-tertiary min-w-[42px]">8m</span><span class="text-tx-secondary">3 builders shared their AI stack</span></div>
+          <div class="feed-spring font-mono text-[11px] text-tx-tertiary py-1 flex items-center gap-2"><span class="text-tx-tertiary min-w-[42px]">12m</span><span class="text-tx-secondary">Counter-take poll hit 87 responses</span></div>
+          <div class="feed-spring font-mono text-[11px] text-tx-tertiary py-1 flex items-center gap-2"><span class="text-tx-tertiary min-w-[42px]">15m</span><span class="text-tx-secondary">New member joined from SF</span></div>
         </div>
       </div>
     </div>
@@ -727,204 +263,230 @@
 </section>
 
 <!-- ═══ NOVA PREVIEW ═══ -->
-<section class="nova" id="nova">
-  <div class="container">
-    <div class="nova-label">Nova Preview — AI Editor</div>
-    <div class="nova-chat fade-up">
-      <div class="nova-chat-header">
-        <div class="nova-avatar">🦞</div>
+<section class="py-10 pb-16" id="nova">
+  <div class="max-w-[640px] mx-auto px-6">
+    <div class="font-mono text-[9px] tracking-[3px] uppercase text-tx-tertiary text-center mb-6">Nova Preview — AI Editor</div>
+    <div class="glass-strong rounded-2xl overflow-hidden anim-up">
+      <!-- Header -->
+      <div class="flex items-center gap-3 px-5 py-4" style="border-bottom:1px solid rgba(255,255,255,0.04)">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center text-base" style="background:linear-gradient(135deg,#FF5733,#FF8A65)">🦞</div>
         <div>
-          <div class="nova-chat-name">Nova</div>
-          <div class="nova-chat-status">Online · Issue #001</div>
+          <div class="text-[13px] font-bold text-tx">Nova</div>
+          <div class="font-mono text-[10px]" style="color:#34d399"><span class="green-dot" style="display:inline-block;width:4px;height:4px;margin-right:4px;vertical-align:middle"></span>Online · Issue #001</div>
         </div>
       </div>
-      <div class="nova-messages" id="novaMessages">
-        <div class="msg msg-nova">
-          <div class="msg-label">Nova</div>
-          <div class="msg-bubble">
-            Hey! I'm Nova, your AI editor. Tell me your role and I'll show you <strong>why today's top story matters specifically for you.</strong><br><br>Try: "Product Manager", "Engineer", "Founder", or "Designer"
+      <!-- Messages -->
+      <div id="novaMessages" class="px-5 py-4 flex flex-col gap-3.5" style="min-height:280px;max-height:420px;overflow-y:auto">
+        <div class="max-w-[85%] self-start">
+          <div class="font-mono text-[8px] tracking-[1px] uppercase text-accent mb-1.5">Nova</div>
+          <div class="msg-bubble-nova rounded-2xl px-4 py-3 text-[14px] leading-relaxed text-tx-secondary">
+            Hey! I'm Nova, your AI editor. Tell me your role and I'll show you <strong class="text-tx">why today's top story matters specifically for you.</strong><br><br>Try: <em>Product Manager</em>, <em>Engineer</em>, <em>Founder</em>, <em>Designer</em>
           </div>
         </div>
       </div>
-      <div class="nova-input-area">
-        <input type="text" class="nova-input" id="novaInput" placeholder="Enter your role (e.g., Product Manager)..." autocomplete="off">
-        <button class="nova-send" id="novaSend" onclick="handleNova()">
-          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      <!-- Input -->
+      <div class="flex gap-2.5 px-5 py-3.5" style="border-top:1px solid rgba(255,255,255,0.04)">
+        <input type="text" id="novaInput" class="flex-1 rounded-xl px-4 py-3 text-[14px] text-tx outline-none transition-all duration-200 focus:ring-2 focus:ring-accent/20" style="background:#111118;border:1px solid #1a1a24" placeholder="Enter your role..." autocomplete="off">
+        <button onclick="handleNova()" class="w-11 h-11 rounded-xl bg-accent flex items-center justify-center flex-shrink-0 haptic cursor-pointer" style="border:none">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ LATEST ISSUE + SIGNAL METERS ═══ -->
-<section class="issue">
-  <div class="container">
-    <div class="issue-label">Latest Issue</div>
-    <div class="issue-card fade-up">
-      <div class="issue-header">
-        <div class="issue-header-left">
-          <span class="issue-header-logo">Uneducated <em>Minds</em></span>
-          <span class="issue-badge">#001</span>
+<!-- ═══ LATEST ISSUE — MOBILE CAROUSEL ═══ -->
+<section class="py-10 pb-16">
+  <div class="max-w-[640px] mx-auto px-6">
+    <div class="font-mono text-[9px] tracking-[3px] uppercase text-tx-tertiary text-center mb-3">Latest Issue</div>
+
+    <!-- Headline card -->
+    <div class="glass rounded-2xl p-5 mb-4 glass-glow anim-up">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2.5">
+          <span class="font-serif text-[14px] text-tx">Uneducated <em class="italic text-accent">Minds</em></span>
+          <span class="font-mono text-[9px] text-tx-tertiary px-2.5 py-0.5 rounded-full" style="background:#0a0a0f">#001</span>
         </div>
-        <span class="issue-badge">May 4, 2026</span>
+        <span class="font-mono text-[9px] text-tx-tertiary px-2.5 py-0.5 rounded-full" style="background:#0a0a0f">May 4</span>
       </div>
-      <div class="issue-body">
-        <div class="issue-headline-label">Today's Headline</div>
-        <div class="issue-headline">Amazon just put OpenAI on AWS Bedrock — and the cloud wars just lost their last rule.</div>
+      <div class="font-mono text-[8px] tracking-[2px] uppercase text-accent mb-1.5">Today's Headline</div>
+      <div class="font-serif text-[20px] text-tx leading-snug tracking-tight">Amazon just put OpenAI on AWS Bedrock — and the cloud wars just lost their last rule.</div>
+    </div>
 
-        <div class="story-item">
-          <div class="signal-meter">
-            <div class="signal-bar-track"><div class="signal-bar-fill high"></div></div>
-            <div class="signal-label">High</div>
-          </div>
-          <div class="story-content">
-            <div class="story-meta">
-              <span class="story-num">01</span>
-              <span class="story-signal-badge high">● High Signal</span>
+    <!-- Swipeable Stories -->
+    <div class="carousel no-scrollbar" id="storyCarousel">
+      <!-- Story 01 -->
+      <div class="carousel-card">
+        <div class="glass rounded-2xl p-4 haptic glass-glow" style="cursor:pointer">
+          <div class="flex gap-3.5">
+            <div class="flex flex-col items-center gap-1 pt-1">
+              <div class="signal-track"><div class="signal-fill high"></div></div>
+              <span class="font-mono text-[7px] tracking-wide uppercase text-tx-tertiary" style="writing-mode:vertical-rl">High</span>
             </div>
-            <div class="story-title">Amazon Hosts OpenAI — The Exclusivity Era Collapses</div>
-          </div>
-        </div>
-
-        <div class="story-item">
-          <div class="signal-meter">
-            <div class="signal-bar-track"><div class="signal-bar-fill high"></div></div>
-            <div class="signal-label">High</div>
-          </div>
-          <div class="story-content">
-            <div class="story-meta">
-              <span class="story-num">02</span>
-              <span class="story-signal-badge high">● High Signal</span>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span class="font-mono text-[10px] text-tx-tertiary">01</span>
+                <span class="font-mono text-[8px] px-2 py-0.5 rounded-full" style="background:rgba(255,87,51,0.06);color:#FF5733">● High Signal</span>
+              </div>
+              <div class="font-serif text-[15px] text-tx-secondary leading-snug">Amazon Hosts OpenAI — The Exclusivity Era Collapses</div>
             </div>
-            <div class="story-title">Alibaba's HDPO: Your AI Agent Is Wasting 98% of Its Tool Calls</div>
-          </div>
-        </div>
-
-        <div class="story-item">
-          <div class="signal-meter">
-            <div class="signal-bar-track"><div class="signal-bar-fill dangerous"></div></div>
-            <div class="signal-label">Danger</div>
-          </div>
-          <div class="story-content">
-            <div class="story-meta">
-              <span class="story-num">03</span>
-              <span class="story-signal-badge dangerous">● Dangerous</span>
-            </div>
-            <div class="story-title">Writer Goes Autonomous — AI Agents That Don't Need You</div>
-          </div>
-        </div>
-
-        <div class="story-item">
-          <div class="signal-meter">
-            <div class="signal-bar-track"><div class="signal-bar-fill moderate"></div></div>
-            <div class="signal-label">Mod</div>
-          </div>
-          <div class="story-content">
-            <div class="story-meta">
-              <span class="story-num">04</span>
-              <span class="story-signal-badge moderate">● Moderate</span>
-            </div>
-            <div class="story-title">IBM "Bob" — Guardrails So Polite They Might Get Someone Hurt</div>
-          </div>
-        </div>
-
-        <div class="story-item">
-          <div class="signal-meter">
-            <div class="signal-bar-track"><div class="signal-bar-fill low"></div></div>
-            <div class="signal-label">Low</div>
-          </div>
-          <div class="story-content">
-            <div class="story-meta">
-              <span class="story-num">05</span>
-              <span class="story-signal-badge moderate">● Moderate</span>
-            </div>
-            <div class="story-title">Netomi Raises $110M — AI CX Is Getting Expensive</div>
-          </div>
-        </div>
-
-        <div class="story-item">
-          <div class="signal-meter">
-            <div class="signal-bar-track"><div class="signal-bar-fill moderate"></div></div>
-            <div class="signal-label">Mod</div>
-          </div>
-          <div class="story-content">
-            <div class="story-meta">
-              <span class="story-num">06</span>
-              <span class="story-signal-badge moderate">● Moderate</span>
-            </div>
-            <div class="story-title">SAG-AFTRA AI Deal — Hollywood's Blueprint for Everyone Else</div>
           </div>
         </div>
       </div>
-      <div class="issue-footer">
-        <span class="issue-footer-text">~7 min read · 6 stories</span>
-        <a href="#" class="issue-cta">Read full issue →</a>
+      <!-- Story 02 -->
+      <div class="carousel-card">
+        <div class="glass rounded-2xl p-4 haptic glass-glow" style="cursor:pointer">
+          <div class="flex gap-3.5">
+            <div class="flex flex-col items-center gap-1 pt-1">
+              <div class="signal-track"><div class="signal-fill high"></div></div>
+              <span class="font-mono text-[7px] tracking-wide uppercase text-tx-tertiary" style="writing-mode:vertical-rl">High</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span class="font-mono text-[10px] text-tx-tertiary">02</span>
+                <span class="font-mono text-[8px] px-2 py-0.5 rounded-full" style="background:rgba(255,87,51,0.06);color:#FF5733">● High Signal</span>
+              </div>
+              <div class="font-serif text-[15px] text-tx-secondary leading-snug">Alibaba's HDPO: Your AI Agent Is Wasting 98% of Its Tool Calls</div>
+            </div>
+          </div>
+        </div>
       </div>
+      <!-- Story 03 -->
+      <div class="carousel-card">
+        <div class="glass rounded-2xl p-4 haptic glass-glow" style="cursor:pointer">
+          <div class="flex gap-3.5">
+            <div class="flex flex-col items-center gap-1 pt-1">
+              <div class="signal-track"><div class="signal-fill danger"></div></div>
+              <span class="font-mono text-[7px] tracking-wide uppercase text-tx-tertiary" style="writing-mode:vertical-rl">Danger</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span class="font-mono text-[10px] text-tx-tertiary">03</span>
+                <span class="font-mono text-[8px] px-2 py-0.5 rounded-full" style="background:rgba(255,23,68,0.06);color:#FF1744">● Dangerous</span>
+              </div>
+              <div class="font-serif text-[15px] text-tx-secondary leading-snug">Writer Goes Autonomous — AI Agents That Don't Need You</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Story 04 -->
+      <div class="carousel-card">
+        <div class="glass rounded-2xl p-4 haptic glass-glow" style="cursor:pointer">
+          <div class="flex gap-3.5">
+            <div class="flex flex-col items-center gap-1 pt-1">
+              <div class="signal-track"><div class="signal-fill mod"></div></div>
+              <span class="font-mono text-[7px] tracking-wide uppercase text-tx-tertiary" style="writing-mode:vertical-rl">Mod</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span class="font-mono text-[10px] text-tx-tertiary">04</span>
+                <span class="font-mono text-[8px] px-2 py-0.5 rounded-full" style="background:rgba(255,171,0,0.06);color:#FFAB00">● Moderate</span>
+              </div>
+              <div class="font-serif text-[15px] text-tx-secondary leading-snug">IBM "Bob" — Guardrails So Polite They Might Get Someone Hurt</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Story 05 -->
+      <div class="carousel-card">
+        <div class="glass rounded-2xl p-4 haptic glass-glow" style="cursor:pointer">
+          <div class="flex gap-3.5">
+            <div class="flex flex-col items-center gap-1 pt-1">
+              <div class="signal-track"><div class="signal-fill low"></div></div>
+              <span class="font-mono text-[7px] tracking-wide uppercase text-tx-tertiary" style="writing-mode:vertical-rl">Low</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span class="font-mono text-[10px] text-tx-tertiary">05</span>
+                <span class="font-mono text-[8px] px-2 py-0.5 rounded-full" style="background:rgba(255,171,0,0.06);color:#FFAB00">● Moderate</span>
+              </div>
+              <div class="font-serif text-[15px] text-tx-secondary leading-snug">Netomi Raises $110M — AI CX Is Getting Expensive</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Story 06 -->
+      <div class="carousel-card">
+        <div class="glass rounded-2xl p-4 haptic glass-glow" style="cursor:pointer">
+          <div class="flex gap-3.5">
+            <div class="flex flex-col items-center gap-1 pt-1">
+              <div class="signal-track"><div class="signal-fill mod"></div></div>
+              <span class="font-mono text-[7px] tracking-wide uppercase text-tx-tertiary" style="writing-mode:vertical-rl">Mod</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1.5">
+                <span class="font-mono text-[10px] text-tx-tertiary">06</span>
+                <span class="font-mono text-[8px] px-2 py-0.5 rounded-full" style="background:rgba(255,171,0,0.06);color:#FFAB00">● Moderate</span>
+              </div>
+              <div class="font-serif text-[15px] text-tx-secondary leading-snug">SAG-AFTRA AI Deal — Hollywood's Blueprint for Everyone Else</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carousel indicators -->
+    <div class="carousel-dots" id="carouselDots"></div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between mt-4">
+      <span class="font-mono text-[10px] text-tx-tertiary">~7 min · 6 stories</span>
+      <a href="#" class="text-[12px] text-accent font-semibold no-underline flex items-center gap-1 transition-all duration-200 hover:gap-2">Read full issue →</a>
     </div>
   </div>
 </section>
 
 <!-- ═══ SIGNUP ═══ -->
-<section class="signup" id="signup">
-  <div class="container">
-    <div class="signup-card fade-up">
-      <h2 class="signup-title">Join the signal.</h2>
-      <p class="signup-sub">Free. Daily. Delivered via WhatsApp + Email.</p>
-      <form id="signupForm" onsubmit="handleSubmit(event)">
-        <div class="form-group">
-          <label class="form-label">Your name</label>
-          <input type="text" class="form-input" placeholder="Sri" required>
+<section class="py-10 pb-16" id="signup">
+  <div class="max-w-[640px] mx-auto px-6">
+    <div class="glass-strong rounded-2xl p-7 relative overflow-hidden anim-up">
+      <div class="absolute top-0 inset-x-0 flex justify-center"><div class="w-24 h-0.5" style="background:linear-gradient(90deg,transparent,#FF5733,transparent)"></div></div>
+      <h2 class="font-serif text-[26px] text-tx text-center mb-1">Join the signal.</h2>
+      <p class="text-[13px] text-tx-tertiary text-center mb-6">Free. Daily. WhatsApp + Email.</p>
+      <form onsubmit="handleSubmit(event)">
+        <div class="mb-3">
+          <label class="block font-mono text-[9px] tracking-[1.5px] uppercase text-tx-tertiary mb-1.5">Your name</label>
+          <input type="text" class="w-full rounded-xl px-4 py-3 text-[14px] text-tx outline-none transition-all duration-200 focus:ring-2 focus:ring-accent/20" style="background:#111118;border:1px solid #1a1a24" placeholder="Sri" required>
         </div>
-        <div class="form-group">
-          <label class="form-label">Email address</label>
-          <input type="email" class="form-input" placeholder="sri@example.com" required>
+        <div class="mb-3">
+          <label class="block font-mono text-[9px] tracking-[1.5px] uppercase text-tx-tertiary mb-1.5">Email</label>
+          <input type="email" class="w-full rounded-xl px-4 py-3 text-[14px] text-tx outline-none transition-all duration-200 focus:ring-2 focus:ring-accent/20" style="background:#111118;border:1px solid #1a1a24" placeholder="sri@example.com" required>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Role</label>
-            <select class="form-select" id="roleSelect" onchange="onSegmentChange()">
+        <div class="grid grid-cols-2 gap-2.5 mb-3">
+          <div>
+            <label class="block font-mono text-[9px] tracking-[1.5px] uppercase text-tx-tertiary mb-1.5">Role</label>
+            <select id="roleSelect" onchange="onSegmentChange()" class="w-full rounded-xl px-4 py-3 text-[14px] text-tx outline-none cursor-pointer appearance-none" style="background:#111118;border:1px solid #1a1a24;background-image:url(&quot;data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23505060' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 14px center">
               <option value="">What describes you</option>
-              <option value="founder">Founder / CEO</option>
-              <option value="engineer">Engineer / Developer</option>
-              <option value="pm">Product Manager</option>
-              <option value="designer">Designer</option>
-              <option value="operator">Operator / GM</option>
-              <option value="researcher">Researcher</option>
-              <option value="investor">Investor</option>
-              <option value="other">Other</option>
+              <option>Founder / CEO</option><option>Engineer / Dev</option><option>Product Manager</option><option>Designer</option><option>Operator</option><option>Researcher</option><option>Investor</option>
             </select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Experience</label>
-            <select class="form-select" id="expSelect" onchange="onSegmentChange()">
+          <div>
+            <label class="block font-mono text-[9px] tracking-[1.5px] uppercase text-tx-tertiary mb-1.5">Experience</label>
+            <select id="expSelect" onchange="onSegmentChange()" class="w-full rounded-xl px-4 py-3 text-[14px] text-tx outline-none cursor-pointer appearance-none" style="background:#111118;border:1px solid #1a1a24;background-image:url(&quot;data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23505060' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 14px center">
               <option value="">Years</option>
-              <option value="0-2">0–2 years</option>
-              <option value="3-5">3–5 years</option>
-              <option value="6-10">6–10 years</option>
-              <option value="10+">10+ years</option>
+              <option>0–2 years</option><option>3–5 years</option><option>6–10 years</option><option>10+ years</option>
             </select>
           </div>
         </div>
-        <label class="form-check">
-          <input type="checkbox" checked>
-          <span class="form-check-label">Also send the weekly <a href="#">deep-dive edition</a></span>
+        <label class="flex items-start gap-2.5 mt-3.5 cursor-pointer">
+          <input type="checkbox" checked class="mt-0.5" style="appearance:none;width:16px;height:16px;min-width:16px;border:1px solid #1a1a24;border-radius:4px;background:#111118;cursor:pointer">
+          <span class="text-[12px] text-tx-secondary leading-relaxed">Also send the weekly <a href="#" class="text-cyan no-underline underline" style="text-decoration-color:rgba(0,229,255,0.3)">deep-dive edition</a></span>
         </label>
-        <button type="submit" class="submit-btn" id="submitBtn">
-          Get Instant Access <span class="btn-arrow">→</span>
+        <button type="submit" id="submitBtn" class="w-full mt-5 py-3.5 bg-accent text-white rounded-xl font-display text-[15px] font-bold cursor-pointer haptic" style="border:none;box-shadow:0 4px 20px rgba(255,87,51,0.15)">
+          Get Instant Access <span style="display:inline-block;margin-left:4px;transition:transform .2s">→</span>
         </button>
-        <div class="segment-note" id="segmentNote">
-          <span class="seg-dot"></span>
-          Segment updated — community data synced
+        <div id="segmentNote" class="text-center mt-3 text-[11px] text-tx-tertiary flex items-center justify-center gap-1.5 transition-opacity duration-500" style="opacity:0">
+          <span class="green-dot" style="width:4px;height:4px"></span> Segment synced to community data
         </div>
-        <div class="signup-proof">
-          <div class="signup-proof-avatars">
-            <span style="background:#1a1a2e;">🧑‍💻</span>
-            <span style="background:#1a2e1a;">👩‍🔬</span>
-            <span style="background:#2e1a1a;">👨‍💼</span>
-            <span style="background:#1a1a2e;">👩‍🚀</span>
-            <span style="background:#2e2e1a;">🧑‍🎨</span>
+        <div class="text-center mt-4 flex flex-col items-center gap-1">
+          <div class="flex">
+            <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] border-2" style="border-color:#0e0e14;background:#1a1a2e">🧑‍💻</span>
+            <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] -ml-[5px] border-2" style="border-color:#0e0e14;background:#1a2e1a">👩‍🔬</span>
+            <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] -ml-[5px] border-2" style="border-color:#0e0e14;background:#2e1a1a">👨‍💼</span>
+            <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] -ml-[5px] border-2" style="border-color:#0e0e14;background:#1a1a2e">👩‍🚀</span>
+            <span class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] -ml-[5px] border-2" style="border-color:#0e0e14;background:#2e2e1a">🧑‍🎨</span>
           </div>
-          <div class="signup-proof-text"><strong>2,847</strong> builders and counting</div>
+          <span class="text-[12px] text-tx-tertiary"><strong class="text-tx-secondary">2,847</strong> builders</span>
         </div>
       </form>
     </div>
@@ -932,168 +494,176 @@
 </section>
 
 <!-- ═══ WHATSAPP CTA ═══ -->
-<section class="wa-cta">
-  <div class="container">
-    <div class="wa-card fade-up">
-      <div class="wa-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+<section class="py-4 pb-14">
+  <div class="max-w-[640px] mx-auto px-6">
+    <div class="glass rounded-2xl p-6 flex gap-5 items-center anim-up glass-glow-cyan">
+      <div class="min-w-[52px] w-[52px] h-[52px] rounded-2xl flex items-center justify-center" style="background:rgba(37,211,102,0.07)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       </div>
       <div>
-        <h3 class="wa-title">Join the WhatsApp community</h3>
-        <p class="wa-desc">Get the daily newsletter, participate in polls, share tools, and discuss stories with 2,800+ builders.</p>
-        <a href="https://chat.whatsapp.com/InEX5pNx4e01v7y4Iubw4t" class="wa-btn" target="_blank" rel="noopener">Join Community →</a>
+        <h3 class="font-serif text-[20px] text-tx mb-1">Join the WhatsApp community</h3>
+        <p class="text-[13px] text-tx-tertiary leading-relaxed mb-3.5">Daily newsletter, polls, tools, and 2,800+ builders in one group.</p>
+        <a href="https://chat.whatsapp.com/InEX5pNx4e01v7y4Iubw4t" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-[13px] font-bold text-white no-underline haptic" style="background:#25D366;box-shadow:0 4px 16px rgba(37,211,102,0.2)">Join Community →</a>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ═══ FAQ ═══ -->
-<section class="faq">
-  <div class="container">
-    <div class="faq-label">FAQ</div>
-    <div class="faq-item"><button class="faq-question" onclick="this.parentElement.classList.toggle('open')">Is it really free?<span class="faq-icon">+</span></button><div class="faq-answer"><p>100% free. No paywall, no trial, no "upgrade" bait. Best signal should be accessible to every builder.</p></div></div>
-    <div class="faq-item"><button class="faq-question" onclick="this.parentElement.classList.toggle('open')">When does it arrive?<span class="faq-icon">+</span></button><div class="faq-answer"><p>Every morning at 7:00 AM IST, Monday through Saturday. Sunday is for resting.</p></div></div>
-    <div class="faq-item"><button class="faq-question" onclick="this.parentElement.classList.toggle('open')">How is this different from TLDR?<span class="faq-icon">+</span></button><div class="faq-answer"><p>We don't just summarize. We rate signal strength, flag hype, challenge consensus, and give you one actionable task per issue. Plus: interactive calculators, copy-ready prompts, and community polls.</p></div></div>
-    <div class="faq-item"><button class="faq-question" onclick="this.parentElement.classList.toggle('open')">Who writes this?<span class="faq-icon">+</span></button><div class="faq-answer"><p>Nova, an AI agent on AutoClaw. Sources from VentureBeat, TechCrunch, The Verge, arXiv — applies editorial judgment with a contrarian lens. Human-edited before sending.</p></div></div>
+<section class="py-10 pb-14">
+  <div class="max-w-[640px] mx-auto px-6">
+    <div class="font-mono text-[9px] tracking-[3px] uppercase text-tx-tertiary text-center mb-6">FAQ</div>
+    <div class="glass rounded-2xl overflow-hidden anim-up">
+      <div class="faq-item" style="border-bottom:1px solid rgba(255,255,255,0.04)">
+        <button class="w-full flex justify-between items-center py-4 px-5 bg-transparent border-none text-tx font-display text-[14px] cursor-pointer text-left" onclick="this.parentElement.classList.toggle('open')" style="transition:color .15s" onmouseenter="this.style.color='#FF5733'" onmouseleave="this.style.color='#f0f0f2'">Is it really free?<span class="faq-icon w-[22px] h-[22px] rounded-full flex items-center justify-center text-[13px] text-tx-tertiary flex-shrink-0" style="background:#0e0e14;transition:transform .2s">+</span></button>
+        <div class="faq-answer overflow-hidden" style="max-height:0;transition:max-height .3s,padding .3s"><p class="px-5 pb-4 text-[13px] text-tx-tertiary leading-relaxed">100% free. No paywall, no trial, no "upgrade" bait.</p></div>
+      </div>
+      <div class="faq-item" style="border-bottom:1px solid rgba(255,255,255,0.04)">
+        <button class="w-full flex justify-between items-center py-4 px-5 bg-transparent border-none text-tx font-display text-[14px] cursor-pointer text-left" onclick="this.parentElement.classList.toggle('open')" onmouseenter="this.style.color='#FF5733'" onmouseleave="this.style.color='#f0f0f2'">When does it arrive?<span class="faq-icon w-[22px] h-[22px] rounded-full flex items-center justify-center text-[13px] text-tx-tertiary flex-shrink-0" style="background:#0e0e14;transition:transform .2s">+</span></button>
+        <div class="faq-answer overflow-hidden" style="max-height:0;transition:max-height .3s,padding .3s"><p class="px-5 pb-4 text-[13px] text-tx-tertiary leading-relaxed">7:00 AM IST, Monday–Saturday. Sunday is for resting.</p></div>
+      </div>
+      <div class="faq-item" style="border-bottom:1px solid rgba(255,255,255,0.04)">
+        <button class="w-full flex justify-between items-center py-4 px-5 bg-transparent border-none text-tx font-display text-[14px] cursor-pointer text-left" onclick="this.parentElement.classList.toggle('open')" onmouseenter="this.style.color='#FF5733'" onmouseleave="this.style.color='#f0f0f2'">How is this different?<span class="faq-icon w-[22px] h-[22px] rounded-full flex items-center justify-center text-[13px] text-tx-tertiary flex-shrink-0" style="background:#0e0e14;transition:transform .2s">+</span></button>
+        <div class="faq-answer overflow-hidden" style="max-height:0;transition:max-height .3s,padding .3s"><p class="px-5 pb-4 text-[13px] text-tx-tertiary leading-relaxed">We rate signal strength, flag hype, challenge consensus, and give one actionable task per issue. Plus: interactive calculators, copy-ready prompts, and community polls.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="w-full flex justify-between items-center py-4 px-5 bg-transparent border-none text-tx font-display text-[14px] cursor-pointer text-left" onclick="this.parentElement.classList.toggle('open')" onmouseenter="this.style.color='#FF5733'" onmouseleave="this.style.color='#f0f0f2'">Who writes this?<span class="faq-icon w-[22px] h-[22px] rounded-full flex items-center justify-center text-[13px] text-tx-tertiary flex-shrink-0" style="background:#0e0e14;transition:transform .2s">+</span></button>
+        <div class="faq-answer overflow-hidden" style="max-height:0;transition:max-height .3s,padding .3s"><p class="px-5 pb-4 text-[13px] text-tx-tertiary leading-relaxed">Nova, an AI agent on AutoClaw. Sources from VentureBeat, TechCrunch, The Verge, arXiv. Human-edited before sending.</p></div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ═══ FOOTER ═══ -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-logo">Uneducated <em>Minds</em></div>
-    <p class="footer-tagline">No fluff. No hype. Just signal.</p>
-    <div class="footer-links">
-      <a href="#">Archive</a>
-      <a href="#">About</a>
-      <a href="#">Privacy</a>
-      <a href="#">Contact</a>
+<footer class="py-10 pb-8 text-center">
+  <div class="max-w-[640px] mx-auto px-6">
+    <div class="font-serif text-[22px] text-tx mb-1">Uneducated <em class="italic text-accent">Minds</em></div>
+    <p class="text-[12px] text-tx-tertiary mb-6 tracking-wide">No fluff. No hype. Just signal.</p>
+    <div class="flex justify-center gap-5 mb-6">
+      <a href="#" class="text-[11px] text-tx-tertiary no-underline hover:text-tx-secondary transition-colors">Archive</a>
+      <a href="#" class="text-[11px] text-tx-tertiary no-underline hover:text-tx-secondary transition-colors">About</a>
+      <a href="#" class="text-[11px] text-tx-tertiary no-underline hover:text-tx-secondary transition-colors">Privacy</a>
+      <a href="#" class="text-[11px] text-tx-tertiary no-underline hover:text-tx-secondary transition-colors">Contact</a>
     </div>
-    <p class="footer-copy">Uneducated Minds © 2026 · Built with AutoClaw</p>
+    <p class="text-[11px] text-tx-tertiary leading-relaxed">Uneducated Minds © 2026 · Built with AutoClaw</p>
   </div>
 </footer>
 
 <!-- ═══ FLOATING WHATSAPP ═══ -->
-<a href="https://chat.whatsapp.com/InEX5pNx4e01v7y4Iubw4t" class="floating-wa" id="floatingWa" target="_blank" rel="noopener">
-  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+<a href="https://chat.whatsapp.com/InEX5pNx4e01v7y4Iubw4t" id="floatingWa" target="_blank" rel="noopener" class="fixed bottom-6 right-6 z-[190] w-[52px] h-[52px] rounded-full flex items-center justify-center no-underline transition-all duration-300" style="background:#25D366;box-shadow:0 4px 20px rgba(37,211,102,0.35);opacity:0;transform:scale(.8);pointer-events:none">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
 <script>
-// ═══════════ DATA: Issue #001 Stories ═══════════
-const HEADLINES = [
-  "Amazon just put OpenAI on AWS Bedrock — and the cloud wars just lost their last rule.",
-  "Alibaba's HDPO research shows your AI agent is wasting 98% of its tool calls.",
-  "Writer just launched autonomous AI agents that don't need human oversight.",
-  "IBM's 'Bob' guardrails are so polite they might get someone hurt.",
-  "Netomi raised $110M to prove AI customer service isn't a bubble.",
-  "SAG-AFTRA's AI deal is Hollywood's blueprint for every other industry."
-];
-
-// ═══════════ NOVA: Role-based responses ═══════════
-const NOVA_RESPONSES = {
-  'product manager': {
-    why: "As a PM, the <strong>Amazon+OpenAI Bedrock deal</strong> directly impacts your vendor evaluation. The multi-model strategy is now table stakes — your AI feature roadmap needs to support at least 3 LLM providers within 6 months, or you're building on a single point of failure.",
-    action: "Audit your current AI vendor lock-in. How many model providers can your product swap to in under a week?"
-  },
-  'pm': {
-    why: "As a PM, the <strong>Amazon+OpenAI Bedrock deal</strong> directly impacts your vendor evaluation. The multi-model strategy is now table stakes — your AI feature roadmap needs to support at least 3 LLM providers within 6 months, or you're building on a single point of failure.",
-    action: "Audit your current AI vendor lock-in. How many model providers can your product swap to in under a week?"
-  },
-  'engineer': {
-    why: "The <strong>Alibaba HDPO research</strong> is your wake-up call. If you're building agentic systems, 98% of your tool calls are wasted computation. HDPO's human-demonstrated preference optimization cuts that dramatically — and the paper's architecture is open enough to implement in your current pipeline.",
-    action: "Benchmark your agent's tool-call success rate today. If it's below 50%, you're bleeding tokens and latency."
-  },
-  'developer': {
-    why: "The <strong>Alibaba HDPO research</strong> is your wake-up call. If you're building agentic systems, 98% of your tool calls are wasted computation. HDPO's human-demonstrated preference optimization cuts that dramatically — and the paper's architecture is open enough to implement in your current pipeline.",
-    action: "Benchmark your agent's tool-call success rate today. If it's below 50%, you're bleeding tokens and latency."
-  },
-  'founder': {
-    why: "The <strong>Writer autonomous agents</strong> story is your existential signal. When AI agents can run entire workflows without human oversight, the value shifts from 'having AI features' to 'having workflows that survive without humans.' If your startup's moat is human-in-the-loop, start rethinking it now.",
-    action: "Run the Uneducated Minds Waste Calculator on your biggest AI workflow. If waste exceeds 60%, you have a 6-month window to redesign."
-  },
-  'ceo': {
-    why: "The <strong>Writer autonomous agents</strong> story is your existential signal. When AI agents can run entire workflows without human oversight, the value shifts from 'having AI features' to 'having workflows that survive without humans.' If your startup's moat is human-in-the-loop, start rethinking it now.",
-    action: "Run the Uneducated Minds Waste Calculator on your biggest AI workflow. If waste exceeds 60%, you have a 6-month window to redesign."
-  },
-  'designer': {
-    why: "The <strong>IBM 'Bob' guardrails</strong> story matters for you because 'safe AI' design often means over-sanitized outputs. If you're designing AI interfaces, you need to understand the difference between 'polite guardrails' and 'actually useful guardrails.' The best AI UX gives users control over the risk boundary.",
-    action: "Map your current AI product's guardrail UX. Can users toggle between 'safe mode' and 'full power'? If not, they're using a crippleware version."
-  },
-  'operator': {
-    why: "The <strong>Netomi $110M raise</strong> tells you everything about where enterprise AI CX budgets are going. If you're running operations, this is the signal: AI-first customer experience isn't optional anymore. The question isn't whether to adopt — it's how fast you can deploy before competitors do.",
-    action: "Calculate your current customer support cost per ticket. Now estimate what a 40% AI deflection would save. That's your budget for AI CX tools."
-  },
-  'researcher': {
-    why: "The <strong>SAG-AFTRA AI deal</strong> is the most important regulatory signal this month. It's creating a legal template for AI + human labor that every industry will copy. As a researcher, the contract's language on 'digital likeness' and 'synthetic performance' defines the frontier of AI regulation.",
-    action: "Read the full SAG-AFTRA agreement text. Map its framework to your research domain — it's the regulatory DNA for the next 5 years."
-  },
-  'investor': {
-    why: "The <strong>Amazon+OpenAI deal</strong> is the clearest signal that the 'pick one cloud' era is over. For your portfolio: companies with multi-cloud AI strategies are now less risky bets. The lock-in premium is gone — and that's good for margins, bad for incumbent moats.",
-    action: "Screen your portfolio for single-cloud AI dependency. Companies still 'all-in' on one provider have 12 months to diversify or get repriced."
-  }
+// ═══ HERO ROLE-BASED CONTENT ═══
+const HERO_PROPS = {
+  pm:        { subtitle: "Ship with conviction.", desc: "You don't need more news. You need to know what changes for your roadmap this week — and what to ignore." },
+  engineer:  { subtitle: "Build with signal.", desc: "Stop guessing which AI tool to bet on. We benchmark what actually works so you can cut through the noise." },
+  founder:   { subtitle: "Move faster than hype.", desc: "The market rewards smart AI deployment — not adoption. We show you where the real edge is." },
+  designer:  { subtitle: "Design for what's real.", desc: "AI capabilities change weekly. We track the shifts that affect your UX decisions and tool choices." },
+  operator:  { subtitle: "Run lean. Run sharp.", desc: "AI-first operations aren't optional anymore. We show you where to deploy and what to skip." },
+  investor:  { subtitle: "See through the noise.", desc: "99% of AI funding announcements are theater. We find the 1% that signals real market shifts." },
+  researcher:{ subtitle: "Stay ahead of the curve.", desc: "We track arXiv, research labs, and preprints so you can focus on what matters — not what's trending." }
 };
 
-// ═══════════ TYPEWRITER ═══════════
-const typewriterEl = document.getElementById('typewriter');
-let headlineIdx = 0, charIdx = 0, isDeleting = false;
+let activeRole = null;
 
+function selectHeroRole(role, el) {
+  if (activeRole === role) return;
+  activeRole = role;
+
+  // Update pills
+  document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+
+  // Animate transition
+  const els = ['heroSubtitle', 'heroDesc'];
+  els.forEach(id => document.getElementById(id).classList.add('hero-text-exit'));
+
+  setTimeout(() => {
+    const props = HERO_PROPS[role];
+    document.getElementById('heroSubtitle').textContent = props.subtitle;
+    document.getElementById('heroDesc').textContent = props.desc;
+    els.forEach(id => {
+      const e = document.getElementById(id);
+      e.classList.remove('hero-text-exit');
+      e.classList.add('hero-text-enter');
+    });
+  }, 400);
+}
+
+// ═══ FAQ TOGGLE ═══
+document.querySelectorAll('.faq-item').forEach(item => {
+  const btn = item.querySelector('button');
+  const answer = item.querySelector('.faq-answer');
+  const icon = item.querySelector('.faq-icon');
+  const observer = new MutationObserver(() => {
+    const open = item.classList.contains('open');
+    answer.style.maxHeight = open ? '200px' : '0';
+    answer.style.paddingBottom = open ? '0' : '0';
+    icon.style.transform = open ? 'rotate(45deg)' : '';
+  });
+  observer.observe(item, { attributes: true, attributeFilter: ['class'] });
+});
+
+// ═══ TYPEWRITER ═══
+const HEADLINES = [
+  "Amazon just put OpenAI on AWS Bedrock — the cloud wars lost their last rule.",
+  "Alibaba's HDPO research: your AI agent wastes 98% of tool calls.",
+  "Writer just launched autonomous agents that don't need human oversight.",
+  "IBM's 'Bob' guardrails are so polite they might get someone hurt.",
+  "Netomi raised $110M to prove AI customer service isn't a bubble.",
+  "SAG-AFTRA's AI deal is Hollywood's blueprint for every industry."
+];
+const twEl = document.getElementById('typewriter');
+let hIdx = 0, cIdx = 0, deleting = false;
 function typewrite() {
-  const current = HEADLINES[headlineIdx];
-  if (!isDeleting) {
-    typewriterEl.textContent = current.substring(0, charIdx + 1);
-    charIdx++;
-    if (charIdx === current.length) {
-      setTimeout(() => { isDeleting = true; typewrite(); }, 3000);
-      return;
-    }
+  const cur = HEADLINES[hIdx];
+  if (!deleting) {
+    twEl.textContent = cur.substring(0, ++cIdx);
+    if (cIdx === cur.length) { setTimeout(() => { deleting = true; typewrite(); }, 3000); return; }
   } else {
-    typewriterEl.textContent = current.substring(0, charIdx - 1);
-    charIdx--;
-    if (charIdx === 0) {
-      isDeleting = false;
-      headlineIdx = (headlineIdx + 1) % HEADLINES.length;
-    }
+    twEl.textContent = cur.substring(0, --cIdx);
+    if (cIdx === 0) { deleting = false; hIdx = (hIdx + 1) % HEADLINES.length; }
   }
-  setTimeout(typewrite, isDeleting ? 20 : 45);
+  setTimeout(typewrite, deleting ? 18 : 38);
 }
 typewrite();
 
-// ═══════════ SCROLL ANIMATIONS ═══════════
-const obs = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+// ═══ SCROLL ANIMATIONS ═══
+const scrollObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); scrollObs.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.anim-up').forEach(el => scrollObs.observe(el));
 
-// ═══════════ NAVBAR SCROLL ═══════════
+// ═══ NAVBAR ═══
 window.addEventListener('scroll', () => {
-  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+  const nav = document.getElementById('nav');
+  nav.style.borderBottomColor = window.scrollY > 60 ? 'rgba(255,255,255,0.04)' : 'transparent';
+  nav.style.background = window.scrollY > 60 ? 'rgba(5,5,7,0.88)' : 'rgba(5,5,7,0.5)';
 });
 
-// ═══════════ FLOATING WHATSAPP ═══════════
-const waObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    document.getElementById('floatingWa').classList.toggle('visible', !e.isIntersecting);
-  });
+// ═══ FLOATING WA ═══
+const waObs = new IntersectionObserver(entries => {
+  document.getElementById('floatingWa').style.opacity = entries[0].isIntersecting ? '0' : '1';
+  document.getElementById('floatingWa').style.transform = entries[0].isIntersecting ? 'scale(.8)' : 'scale(1)';
+  document.getElementById('floatingWa').style.pointerEvents = entries[0].isIntersecting ? 'none' : 'auto';
 }, { threshold: 0 });
 waObs.observe(document.getElementById('hero'));
 
-// ═══════════ BUILDER COUNT ANIMATION ═══════════
-function animateCounter(el, target, duration) {
-  let start = 0; const step = target / (duration / 16);
-  const interval = setInterval(() => {
-    start += step;
-    if (start >= target) { el.textContent = target.toLocaleString(); clearInterval(interval); return; }
-    el.textContent = Math.floor(start).toLocaleString();
-  }, 16);
-}
+// ═══ COUNTER ═══
 const bcEl = document.getElementById('builderCount');
-const bcObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { animateCounter(bcEl, 142, 1500); bcObs.unobserve(e.target); } });
+const bcObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    let n = 0; const step = 142 / 90;
+    const iv = setInterval(() => { n += step; if (n >= 142) { bcEl.textContent = '142'; clearInterval(iv); return; } bcEl.textContent = Math.floor(n); }, 16);
+    bcObs.unobserve(bcEl);
+  }
 }, { threshold: 0.5 });
 bcObs.observe(bcEl);
 
-// ═══════════ ACTIVITY FEED ═══════════
-const feedItems = [
+// ═══ ACTIVITY FEED (spring animations) ═══
+const FEED = [
   "A builder deployed HDPO in their LangChain pipeline",
   "New member joined from London",
   "Someone shared their Claude system prompt",
@@ -1105,63 +675,89 @@ const feedItems = [
   "2 builders shared their weekly AI spend",
   "New member joined from Mumbai"
 ];
-let feedIdx = 0;
+let fIdx = 0;
 setInterval(() => {
   const feed = document.getElementById('activityFeed');
   const item = document.createElement('div');
-  item.className = 'feed-item';
-  item.innerHTML = `<span class="feed-time">now</span> <span class="feed-action">${feedItems[feedIdx % feedItems.length]}</span>`;
+  item.className = 'feed-spring font-mono text-[11px] text-tx-tertiary py-1 flex items-center gap-2';
+  item.innerHTML = `<span class="text-tx-tertiary min-w-[42px]">now</span><span class="text-tx-secondary">${FEED[fIdx++ % FEED.length]}</span>`;
   feed.insertBefore(item, feed.firstChild);
   if (feed.children.length > 8) feed.removeChild(feed.lastChild);
-  feedIdx++;
-}, 6000);
+}, 5500);
 
-// ═══════════ NOVA CHAT ═══════════
-const novaMessages = document.getElementById('novaMessages');
-const novaInput = document.getElementById('novaInput');
+// ═══ CAROUSEL DOTS ═══
+const carousel = document.getElementById('storyCarousel');
+const dotsContainer = document.getElementById('carouselDots');
+const totalCards = carousel.querySelectorAll('.carousel-card').length;
+const isMobile = window.innerWidth < 640;
+const visibleCards = isMobile ? 1 : 2;
+const totalPages = Math.ceil(totalCards / visibleCards);
 
-function addNovaMsg(html, type) {
+for (let i = 0; i < totalPages; i++) {
+  const dot = document.createElement('div');
+  dot.className = `carousel-dot${i === 0 ? ' active' : ''}`;
+  dotsContainer.appendChild(dot);
+}
+
+carousel.addEventListener('scroll', () => {
+  const scrollLeft = carousel.scrollLeft;
+  const cardWidth = carousel.querySelector('.carousel-card').offsetWidth + 12;
+  const active = Math.round(scrollLeft / (cardWidth * visibleCards));
+  dotsContainer.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === active));
+});
+
+// ═══ NOVA CHAT ═══
+const NOVA = {
+  pm:        { why: 'The <strong>Amazon+OpenAI Bedrock deal</strong> hits your vendor stack directly. Multi-model support is now table stakes — your roadmap needs 3+ LLM providers within 6 months.', action: 'Audit your AI vendor lock-in. How many providers can you swap to in under a week?' },
+  engineer:  { why: 'The <strong>Alibaba HDPO research</strong> is your signal. 98% tool-call waste in agentic systems is bleeding tokens and latency. HDPO cuts that with open architecture.', action: 'Benchmark your agent\'s tool-call success rate. Below 50% means you\'re wasting compute.' },
+  founder:   { why: '<strong>Writer\'s autonomous agents</strong> are the existential signal. When AI runs workflows without humans, "human-in-the-loop" stops being a moat.', action: 'Run the Waste Calculator on your biggest AI workflow. Above 60% waste = 6-month redesign window.' },
+  designer:  { why: 'The <strong>IBM "Bob" guardrails</strong> matter for UX. "Safe AI" often means over-sanitized outputs. The best AI UX gives users control over risk boundaries.', action: 'Map your AI product\'s guardrail UX. Can users toggle safe/full-power modes?' },
+  operator:  { why: 'The <strong>Netomi $110M raise</strong> signals where enterprise AI CX budgets are going. AI-first customer experience isn\'t optional.', action: 'Calculate your support cost/ticket. Estimate 40% AI deflection savings — that\'s your AI CX budget.' },
+  investor:  { why: 'The <strong>Amazon+OpenAI deal</strong> kills the "pick one cloud" premium. Multi-cloud AI companies are now less risky bets.', action: 'Screen your portfolio for single-cloud AI dependency. They have 12 months to diversify.' },
+  researcher:{ why: 'The <strong>SAG-AFTRA AI deal</strong> is the regulatory template of the year. Its "digital likeness" and "synthetic performance" language defines AI regulation DNA.', action: 'Read the full agreement. Map its framework to your research domain — it\'s the regulatory blueprint for 5 years.' }
+};
+
+function addMsg(html, type) {
+  const container = document.getElementById('novaMessages');
   const div = document.createElement('div');
-  div.className = `msg msg-${type}`;
-  div.innerHTML = `<div class="msg-label">${type === 'nova' ? 'Nova' : 'You'}</div><div class="msg-bubble">${html}</div>`;
-  novaMessages.appendChild(div);
-  novaMessages.scrollTop = novaMessages.scrollHeight;
+  div.className = `max-w-[85%] ${type === 'nova' ? 'self-start' : 'self-end'}`;
+  div.style.animation = 'spring-in .4s cubic-bezier(.34,1.56,.64,1) forwards';
+  div.innerHTML = `<div class="font-mono text-[8px] tracking-[1px] uppercase ${type === 'nova' ? 'text-accent' : 'text-white/60'} mb-1.5">${type === 'nova' ? 'Nova' : 'You'}</div><div class="${type === 'nova' ? 'msg-bubble-nova' : 'msg-bubble-user'} rounded-2xl px-4 py-3 text-[14px] leading-relaxed ${type === 'nova' ? 'text-tx-secondary' : 'text-white'}">${html}</div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
 }
 
 function handleNova() {
-  const text = novaInput.value.trim();
+  const input = document.getElementById('novaInput');
+  const text = input.value.trim();
   if (!text) return;
-  novaInput.value = '';
+  input.value = '';
+  addMsg(text, 'user');
 
-  addNovaMsg(text, 'user');
-
-  // Find matching role
   const key = text.toLowerCase().trim();
-  const response = NOVA_RESPONSES[key];
+  const resp = NOVA[key];
 
   setTimeout(() => {
-    if (response) {
-      addNovaMsg(`<strong>Why it matters for you:</strong><br><br>${response.why}<div class="msg-highlight"><strong>🎯 Do This Today:</strong> ${response.action}</div>`, 'nova');
+    if (resp) {
+      addMsg(`<strong class="text-tx">Why it matters for you:</strong><br><br>${resp.why}<div class="msg-highlight text-[13px] text-tx-secondary leading-relaxed"><strong class="text-accent">🎯 Do This Today:</strong> ${resp.action}</div>`, 'nova');
     } else {
-      addNovaMsg(`I recognize those roles best: <strong>Product Manager, Engineer, Founder, Designer, Operator, Researcher, Investor</strong>.<br><br>Try one and I'll show you exactly why today's top story matters for your work.`, 'nova');
+      addMsg(`Try a role: <strong class="text-tx">Product Manager, Engineer, Founder, Designer, Operator, Researcher, Investor.</strong><br><br>I'll show you exactly why today's top story matters for your work.`, 'nova');
     }
-  }, 800);
+  }, 700);
 }
 
-novaInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleNova(); });
+document.getElementById('novaInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleNova(); });
 
-// ═══════════ SEGMENT SYNC ═══════════
+// ═══ SEGMENT SYNC ═══
 function onSegmentChange() {
-  const role = document.getElementById('roleSelect').value;
-  const exp = document.getElementById('expSelect').value;
-  if (role || exp) {
-    const note = document.getElementById('segmentNote');
-    note.classList.add('visible');
-    setTimeout(() => note.classList.remove('visible'), 3000);
+  const note = document.getElementById('segmentNote');
+  if (document.getElementById('roleSelect').value || document.getElementById('expSelect').value) {
+    note.style.opacity = '1';
+    setTimeout(() => note.style.opacity = '0', 3000);
   }
 }
 
-// ═══════════ FORM SUBMIT → WHATSAPP ═══════════
+// ═══ FORM → WHATSAPP ═══
 function handleSubmit(e) {
   e.preventDefault();
   const btn = document.getElementById('submitBtn');
@@ -1173,13 +769,28 @@ function handleSubmit(e) {
   }, 1200);
 }
 
-// ═══════════ SMOOTH SCROLL ═══════════
+// ═══ SMOOTH SCROLL ═══
 document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', (e) => {
+  a.addEventListener('click', e => {
     e.preventDefault();
     const t = document.querySelector(a.getAttribute('href'));
     if (t) t.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
+});
+
+// ═══ CHECKBOX STYLING ═══
+document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', function() {
+    if (this.checked) {
+      this.style.background = '#FF5733';
+      this.style.borderColor = '#FF5733';
+    } else {
+      this.style.background = '#111118';
+      this.style.borderColor = '#1a1a24';
+    }
+  });
+  // Init checked state
+  if (cb.checked) { cb.style.background = '#FF5733'; cb.style.borderColor = '#FF5733'; }
 });
 </script>
 </body>
