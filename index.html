@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uneducated Minds — Daily AI Newsletter for Builders</title>
+<meta name="description" content="No fluff. No hype. Just signal. Daily AI newsletter for builders, founders, and operators. Join 2,800+ builders on WhatsApp.">
+<meta property="og:title" content="Uneducated Minds — Daily AI Newsletter for Builders">
+<meta property="og:description" content="No fluff. No hype. Just signal. 6 curated AI stories, one contrarian editorial, and one actionable task — delivered daily.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050507;
+    --bg-elevated: #0a0a0f;
+    --bg-card: #0e0e14;
+    --bg-input: #111118;
+    --border: #1a1a24;
+    --border-focus: #2a2a3a;
+    --text-primary: #f0f0f2;
+    --text-secondary: #9898a6;
+    --text-tertiary: #505060;
+    --accent: #e8553d;
+    --accent-hover: #d44a34;
+    --accent-glow: rgba(232,85,61,0.15);
+    --accent-glow-strong: rgba(232,85,61,0.25);
+    --signal-high: #34d399;
+    --signal-mod: #fbbf24;
+    --signal-low: #71717a;
+    --blue: #60a5fa;
+    --font-serif: 'Instrument Serif', Georgia, serif;
+    --font-display: 'Syne', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ═══ GRAIN OVERLAY ═══ */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ═══ CONTAINER ═══ */
+  .container {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ═══ NAVBAR ═══ */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: center;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(5,5,7,0.7);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+
+  .nav-inner {
+    max-width: 560px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .nav-logo-text {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  .nav-logo-text em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .nav-cta {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid rgba(232,85,61,0.3);
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .nav-cta:hover {
+    background: var(--accent-glow);
+    border-color: rgba(232,85,61,0.5);
+  }
+
+  /* ═══ HERO ═══ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 0 60px;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--signal-high);
+    background: rgba(52,211,153,0.06);
+    border: 1px solid rgba(52,211,153,0.12);
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 32px;
+  }
+
+  .hero-badge .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--signal-high);
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(56px, 12vw, 88px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -3px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-serif);
+    font-size: clamp(22px, 5vw, 32px);
+    color: var(--text-secondary);
+    line-height: 1.3;
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-tertiary);
+    max-width: 420px;
+    margin: 0 auto 40px;
+  }
+
+  .hero-author {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+
+  .hero-avatar {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), #ff8a65);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .hero-author-info {
+    text-align: left;
+  }
+
+  .hero-author-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .hero-author-role {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .scroll-hint {
+    margin-top: auto;
+    padding-top: 40px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    letter-spacing: 1px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: bob 2s infinite;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .hero-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 28px;
+    background: var(--accent);
+    color: white;
+    border-radius: 12px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .hero-btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px var(--accent-glow-strong);
+  }
+
+  .hero-btn-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background: transparent;
+    color: #25D366;
+    border: 1px solid rgba(37,211,102,0.25);
+    border-radius: 12px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .hero-btn-whatsapp:hover {
+    background: rgba(37,211,102,0.06);
+    border-color: rgba(37,211,102,0.4);
+    transform: translateY(-1px);
+  }
+
+  .hero-btn-whatsapp svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .scroll-hint svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-tertiary);
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  /* ═══ SIGNUP SECTION ═══ */
+  .signup {
+    padding: 80px 0;
+  }
+
+  .signup-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .signup-card::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 2px;
+  }
+
+  .signup-title {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .signup-sub {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 6px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .form-input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .form-input::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .form-select {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    color: var(--text-primary);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23505060' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    transition: border-color 0.2s;
+  }
+
+  .form-select:focus {
+    border-color: var(--border-focus);
+  }
+
+  .form-select option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+  }
+
+  .form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 16px;
+    cursor: pointer;
+  }
+
+  .form-check input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: var(--bg-input);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 2px;
+  }
+
+  .form-check input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .form-check input[type="checkbox"]:checked::after {
+    content: '✓';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .form-check-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .form-check-label a {
+    color: var(--blue);
+    text-decoration: underline;
+    text-decoration-color: rgba(96,165,250,0.3);
+    text-underline-offset: 2px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .submit-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px var(--accent-glow-strong);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  .submit-btn .btn-arrow {
+    display: inline-block;
+    margin-left: 6px;
+    transition: transform 0.2s;
+  }
+
+  .submit-btn:hover .btn-arrow {
+    transform: translateX(4px);
+  }
+
+  .signup-proof {
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .signup-proof-avatars {
+    display: flex;
+  }
+
+  .signup-proof-avatars span {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-elevated);
+    margin-left: -6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+
+  .signup-proof-avatars span:first-child { margin-left: 0; }
+
+  .signup-proof-text {
+    font-size: 13px;
+    color: var(--text-tertiary);
+  }
+
+  .signup-proof-text strong {
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  .signup-safe {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  /* ═══ FEATURES ═══ */
+  .features {
+    padding: 80px 0;
+  }
+
+  .features-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(255,255,255,0.06);
+    transform: translateY(-2px);
+  }
+
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .feature-icon.red { background: rgba(232,85,61,0.08); }
+  .feature-icon.blue { background: rgba(96,165,250,0.08); }
+  .feature-icon.green { background: rgba(52,211,153,0.08); }
+  .feature-icon.yellow { background: rgba(251,191,36,0.08); }
+
+  .feature-title {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .feature-desc {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+  }
+
+  /* ═══ WHATSAPP CTA ═══ */
+  .whatsapp-cta { padding: 20px 0 80px; }
+
+  .whatsapp-card {
+    background: linear-gradient(135deg, rgba(37,211,102,0.04), rgba(37,211,102,0.01));
+    border: 1px solid rgba(37,211,102,0.12);
+    border-radius: 20px;
+    padding: 36px;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .whatsapp-icon {
+    min-width: 64px;
+    width: 64px;
+    height: 64px;
+    background: rgba(37,211,102,0.08);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .whatsapp-title {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .whatsapp-desc {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .whatsapp-join-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 22px;
+    background: #25D366;
+    color: white;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .whatsapp-join-btn:hover {
+    background: #20bd5a;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(37,211,102,0.25);
+  }
+
+  /* ═══ SAMPLE ISSUE ═══ */
+  .sample {
+    padding: 80px 0;
+  }
+
+  .sample-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .sample-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .sample-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sample-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sample-header-logo {
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--text-primary);
+  }
+
+  .sample-header-logo em { color: var(--accent); }
+
+  .sample-header-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    background: var(--bg-elevated);
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  .sample-body {
+    padding: 24px;
+  }
+
+  .sample-headline-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .sample-headline {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--text-primary);
+    line-height: 1.25;
+    margin-bottom: 20px;
+    letter-spacing: -0.3px;
+  }
+
+  .sample-story {
+    padding: 16px 0;
+    border-top: 1px solid var(--border-subtle, var(--border));
+  }
+
+  .sample-story:first-of-type { border-top: none; }
+
+  .sample-story-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .sample-story-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+  }
+
+  .sample-story-badge {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    color: var(--signal-high);
+    background: rgba(52,211,153,0.06);
+  }
+
+  .sample-story-title {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.3;
+  }
+
+  .sample-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sample-footer-text {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.5px;
+  }
+
+  .sample-cta {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: gap 0.2s;
+  }
+
+  .sample-cta:hover { gap: 8px; }
+
+  /* ═══ STATS BAR ═══ */
+  .stats {
+    padding: 60px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    text-align: center;
+  }
+
+  .stat-item {}
+
+  .stat-value {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    color: var(--text-primary);
+    line-height: 1.1;
+    letter-spacing: -1px;
+  }
+
+  .stat-value em { color: var(--accent); font-style: italic; }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ═══ TESTIMONIALS ═══ */
+  .testimonials {
+    padding: 80px 0;
+  }
+
+  .testimonials-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .testimonial-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+  }
+
+  .testimonial-quote {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .testimonial-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .testimonial-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .testimonial-role {
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  /* ═══ FAQ ═══ */
+  .faq {
+    padding: 80px 0;
+  }
+
+  .faq-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .faq-question {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 15px;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.15s;
+  }
+
+  .faq-question:hover { color: var(--accent); }
+
+  .faq-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+
+  .faq-item.open .faq-icon {
+    transform: rotate(45deg);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+
+  .faq-item.open .faq-answer {
+    max-height: 200px;
+    padding-bottom: 18px;
+  }
+
+  .faq-answer p {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    line-height: 1.7;
+  }
+
+  /* ═══ FOOTER ═══ */
+  .footer {
+    padding: 60px 0 40px;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .footer-logo em { color: var(--accent); font-style: italic; }
+
+  .footer-tagline {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-bottom: 32px;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .footer-links a {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .footer-links a:hover { color: var(--text-secondary); }
+
+  .footer-copy {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    line-height: 1.8;
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 640px) {
+    .hero-title { letter-spacing: -2px; }
+    .hero-actions { flex-direction: column; align-items: stretch; }
+    .hero-btn-primary, .hero-btn-whatsapp { justify-content: center; font-size: 14px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat-value { font-size: 28px; }
+    .form-row { grid-template-columns: 1fr; }
+    .signup-card { padding: 24px; }
+    .whatsapp-card { flex-direction: column; text-align: center; padding: 28px; }
+    .footer-links { flex-direction: column; align-items: center; gap: 12px; }
+  }
+
+  /* ═══ ANIMATIONS ═══ */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .fade-up:nth-child(2) { transition-delay: 0.1s; }
+  .fade-up:nth-child(3) { transition-delay: 0.2s; }
+  .fade-up:nth-child(4) { transition-delay: 0.3s; }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">🧠</div>
+      <div class="nav-logo-text">Uneducated <em>Minds</em></div>
+    </a>
+    <a href="https://chat.whatsapp.com/InEX5pNx4e01v7y4Iubw4t" class="nav-cta" target="_blank" rel="noopener">Join on WhatsApp →</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Free Daily Newsletter
+    </div>
+    <h1 class="hero-title fade-up">Uneducated<br><em>Minds</em></h1>
+    <p class="hero-subtitle fade-up">Your unfair advantage in AI.</p>
+    <p class="hero-desc fade-up">No fluff. No hype. Just signal. 6 curated AI stories, one contrarian editorial, and one actionable task — delivered to your inbox every morning at 7 AM.</p>
+    <div class="hero-author fade-up">
+      <div class="hero-avatar">🦞</div>
+      <div class="hero-author-info">
+        <div class="hero-author-name">Sri</div>
+        <div class="hero-author-role">Solopreneur · Builder · Operator</div>
+      </div>
+    </div>
+    <div class="hero-actions fade-up">
+      <a href="#signup" class="hero-btn-primary">Subscribe by Email</a>
+      <a href="https://chat.whatsapp.com/InEX5pNx4e01v7y4Iubw4t" class="hero-btn-whatsapp" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Join on WhatsApp
+      </a>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll to subscribe</span>
+      <svg viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SIGNUP ═══ -->
+<section class="signup" id="signup">
+  <div class="container">
+    <div class="signup-card fade-up">
+      <h2 class="signup-title">Join the community.</h2>
+      <p class="signup-sub">Free. Daily. Delivered via WhatsApp + Email.</p>
+
+      <form id="signupForm" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Your name</label>
+          <input type="text" class="form-input" placeholder="Sri" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email address</label>
+          <input type="email" class="form-input" placeholder="sri@example.com" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Role</label>
+            <select class="form-select">
+              <option value="">What describes you best</option>
+              <option value="founder">Founder / CEO</option>
+              <option value="engineer">Engineer / Developer</option>
+              <option value="pm">Product Manager</option>
+              <option value="designer">Designer</option>
+              <option value="operator">Operator / GM</option>
+              <option value="researcher">Researcher</option>
+              <option value="investor">Investor</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Experience</label>
+            <select class="form-select">
+              <option value="">Years of experience</option>
+              <option value="0-2">0–2 years</option>
+              <option value="3-5">3–5 years</option>
+              <option value="6-10">6–10 years</option>
+              <option value="10+">10+ years</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="form-check">
+          <input type="checkbox" checked>
+          <span class="form-check-label">Also send me the weekly <a href="#">deep-dive edition</a> with analysis and resources</span>
+        </label>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          Get Instant Access on WhatsApp <span class="btn-arrow">→</span>
+        </button>
+
+        <div class="signup-proof">
+          <div class="signup-proof-avatars">
+            <span style="background:#1a1a2e;">🧑‍💻</span>
+            <span style="background:#1a2e1a;">👩‍🔬</span>
+            <span style="background:#2e1a1a;">👨‍💼</span>
+            <span style="background:#1a1a2e;">👩‍🚀</span>
+            <span style="background:#2e2e1a;">🧑‍🎨</span>
+          </div>
+          <div class="signup-proof-text">
+            <strong>Join on WhatsApp.</strong> <span id="readerCount">2,847</span> members and counting.
+          </div>
+        </div>
+
+        <div class="signup-safe">
+          🔒 Your data is safe. No spam, ever.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="features-label">What You'll Get</div>
+    <div class="features-grid">
+      <div class="feature-card fade-up">
+        <div class="feature-icon red">📰</div>
+        <div class="feature-title">6 Stories Daily</div>
+        <div class="feature-desc">Signal-strength rated. Hype-filtered. Only what matters.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon blue">🎯</div>
+        <div class="feature-title">Counter-Take</div>
+        <div class="feature-desc">One story per issue where we challenge the consensus view.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon green">⚡</div>
+        <div class="feature-title">Do This Today</div>
+        <div class="feature-desc">One actionable task in every issue. No theory — execution.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon yellow">🔧</div>
+        <div class="feature-title">Tools & Prompts</div>
+        <div class="feature-desc">Copy-ready system prompts and tools we're actually testing.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WHATSAPP COMMUNITY ═══ -->
+<section class="whatsapp-cta">
+  <div class="container">
+    <div class="whatsapp-card fade-up">
+      <div class="whatsapp-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </div>
+      <div class="whatsapp-content">
+        <h3 class="whatsapp-title">Or join directly on WhatsApp</h3>
+        <p class="whatsapp-desc">Get the daily newsletter, participate in polls, share tools, and discuss stories with 2,800+ builders — all in one group.</p>
+        <a href="https://chat.whatsapp.com/InEX5pNx4e01v7y4Iubw4t" class="whatsapp-join-btn" target="_blank" rel="noopener">
+          Join WhatsApp Community →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SAMPLE ISSUE ═══ -->
+<section class="sample" id="sample">
+  <div class="container">
+    <div class="sample-label">Latest Issue</div>
+    <div class="sample-card fade-up">
+      <div class="sample-header">
+        <div class="sample-header-left">
+          <span class="sample-header-logo">Uneducated <em>Minds</em></span>
+          <span class="sample-header-badge">Issue #001</span>
+        </div>
+        <span class="sample-header-badge">May 4, 2026</span>
+      </div>
+      <div class="sample-body">
+        <div class="sample-headline-label">Today's Headline</div>
+        <div class="sample-headline">Amazon just put OpenAI on AWS Bedrock — and the cloud wars just lost their last rule.</div>
+
+        <div class="sample-story">
+          <div class="sample-story-meta">
+            <span class="sample-story-num">01</span>
+            <span class="sample-story-badge">High Signal</span>
+          </div>
+          <div class="sample-story-title">Amazon Hosts OpenAI — The Exclusivity Era Collapses</div>
+        </div>
+        <div class="sample-story">
+          <div class="sample-story-meta">
+            <span class="sample-story-num">02</span>
+            <span class="sample-story-badge">High Signal</span>
+          </div>
+          <div class="sample-story-title">Alibaba's HDPO: Your AI Agent Is Wasting 98% of Its Tool Calls</div>
+        </div>
+        <div class="sample-story">
+          <div class="sample-story-meta">
+            <span class="sample-story-num">03</span>
+            <span class="sample-story-badge">Dangerous</span>
+          </div>
+          <div class="sample-story-title">Writer Goes Autonomous — AI Agents That Don't Need You</div>
+        </div>
+      </div>
+      <div class="sample-footer">
+        <span class="sample-footer-text">~7 min read · 6 stories</span>
+        <a href="#" class="sample-cta">Read full issue →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item fade-up">
+        <div class="stat-value"><em>6</em></div>
+        <div class="stat-label">Stories per issue</div>
+      </div>
+      <div class="stat-item fade-up">
+        <div class="stat-value"><em>7</em>m</div>
+        <div class="stat-label">Max reading time</div>
+      </div>
+      <div class="stat-item fade-up">
+        <div class="stat-value"><em>7</em> AM</div>
+        <div class="stat-label">Delivered daily</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIAL ═══ -->
+<section class="testimonials">
+  <div class="container">
+    <div class="testimonials-label">What Readers Say</div>
+    <div class="testimonial-card fade-up">
+      <div class="testimonial-quote">
+        "Finally, an AI newsletter that doesn't read like a press release rewrite. The counter-take section alone is worth the subscription. It's the only newsletter I actually finish."
+      </div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">🧑‍💻</div>
+        <div>
+          <div class="testimonial-name">Early Reader</div>
+          <div class="testimonial-role">CTO, Series A Startup</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="faq">
+  <div class="container">
+    <div class="faq-label">FAQ</div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Is it really free?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Yes. 100% free. No paywall, no trial period, no "upgrade to premium" bait. We believe the best signal should be accessible to every builder.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        When does it arrive?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Every morning at 7:00 AM IST, Monday through Saturday. Sunday is for resting — even contrarians need a break.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        How is this different from TLDR / The Rundown?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>We don't just summarize news. We rate signal strength, flag dangerous hype, challenge the consensus, and give you one actionable task per issue. Every story has a "Why It Matters" — not just "What Happened." Plus: interactive calculators, copy-ready prompts, and community polls.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Can I unsubscribe?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>One click. Every email has an unsubscribe link at the bottom. No guilt trips, no "are you sure?" pages. We respect your inbox.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Who writes this?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">
+        <p>Uneducated Minds is written by Nova, an AI agent built on the AutoClaw platform. It sources news from VentureBeat, TechCrunch, The Verge, arXiv, and more — then applies sharp editorial judgment with a contrarian lens. Human-edited and approved before sending.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-logo">Uneducated <em>Minds</em></div>
+    <p class="footer-tagline">No fluff. No hype. Just signal.</p>
+    <div class="footer-links">
+      <a href="#">Archive</a>
+      <a href="#">About</a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact</a>
+    </div>
+    <p class="footer-copy">
+      Uneducated Minds © 2026<br>
+      Built with AutoClaw · Designed for builders who hate wasting time.
+    </p>
+  </div>
+</footer>
+
+<script>
+// Scroll animations
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+// FAQ toggle
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  item.classList.toggle('open');
+}
+
+// Navbar scroll effect
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('.nav');
+  const scroll = window.scrollY;
+  if (scroll > 100) {
+    nav.style.borderBottomColor = 'var(--border)';
+    nav.style.background = 'rgba(5,5,7,0.9)';
+  } else {
+    nav.style.borderBottomColor = 'var(--border)';
+    nav.style.background = 'rgba(5,5,7,0.7)';
+  }
+  lastScroll = scroll;
+});
+
+// Fake subscriber count animation
+function animateCount() {
+  const el = document.getElementById('readerCount');
+  const target = 2847;
+  let current = 2800;
+  const interval = setInterval(() => {
+    current += Math.floor(Math.random() * 3);
+    if (current >= target) {
+      current = target;
+      clearInterval(interval);
+    }
+    el.textContent = current.toLocaleString();
+  }, 50);
+}
+
+const countObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      animateCount();
+      countObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+const proofEl = document.querySelector('.signup-proof');
+if (proofEl) countObs.observe(proofEl);
+
+// Form submit handler
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.innerHTML = '✓ Subscribing via WhatsApp...';
+  btn.style.background = '#25D366';
+  btn.style.opacity = '1';
+
+  // Simulate brief delay then redirect to WhatsApp community
+  setTimeout(() => {
+    window.open('https://chat.whatsapp.com/InEX5pNx4e01v7y4Iubw4t', '_blank');
+    btn.innerHTML = '✓ You\'re in! Redirecting to WhatsApp...';
+  }, 1200);
+}
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
